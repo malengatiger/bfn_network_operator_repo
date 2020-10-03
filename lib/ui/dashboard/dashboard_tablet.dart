@@ -1,6 +1,8 @@
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
+import 'dashboard_menu.dart';
+
 class DashboardTablet extends StatefulWidget {
   @override
   _DashboardTabletState createState() => _DashboardTabletState();
@@ -24,13 +26,24 @@ class _DashboardTabletState extends State<DashboardTablet>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.indigo,
-      child: Center(
-        child: Text(
-          'I am a Tablet',
-          style: Styles.whiteBoldLarge,
-        ),
+    return Scaffold(
+      drawer: DashboardMenu(),
+      appBar: AppBar(
+        title: Text('BFN Network Operator'),
+        backgroundColor: Colors.pink.shade400,
+        bottom: PreferredSize(
+            child: Column(
+              children: [
+                Text(
+                  'This is the 😻 Tablet Dash for the Boss!',
+                  style: Styles.whiteSmall,
+                ),
+                SizedBox(
+                  height: 24,
+                )
+              ],
+            ),
+            preferredSize: Size.fromHeight(100)),
       ),
     );
   }

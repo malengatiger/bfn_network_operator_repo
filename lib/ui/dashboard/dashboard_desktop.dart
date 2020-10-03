@@ -1,6 +1,8 @@
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
+import 'dashboard_menu.dart';
+
 class DashboardDesktop extends StatefulWidget {
   @override
   _DashboardDesktopState createState() => _DashboardDesktopState();
@@ -24,10 +26,25 @@ class _DashboardDesktopState extends State<DashboardDesktop>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.blue,
-      child: Center(
-        child: Text('I am a Friggin Desktop', style: Styles.whiteBoldLarge),
+    return Scaffold(
+      drawer: DashboardMenu(),
+      drawerScrimColor: Colors.red.shade200,
+      appBar: AppBar(
+        title: Text('BFN Network Operator'),
+        backgroundColor: Colors.teal.shade400,
+        bottom: PreferredSize(
+            child: Column(
+              children: [
+                Text(
+                  'This is the  🍊 Desktop Dash for the Boss!',
+                  style: Styles.whiteSmall,
+                ),
+                SizedBox(
+                  height: 24,
+                )
+              ],
+            ),
+            preferredSize: Size.fromHeight(100)),
       ),
     );
   }

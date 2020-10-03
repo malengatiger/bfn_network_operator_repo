@@ -1,3 +1,4 @@
+import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_menu.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
@@ -24,11 +25,25 @@ class _DashboardMobileState extends State<DashboardMobile>
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.pink,
-      child: Center(
-        child: Text('I am a Phone', style: Styles.whiteBoldLarge),
+    return SafeArea(
+        child: Scaffold(
+      drawer: DashboardMenu(),
+      appBar: AppBar(
+        title: Text('BFN Network Operator'),
+        bottom: PreferredSize(
+            child: Column(
+              children: [
+                Text(
+                  'This is the 🥬 Mobile Dash for the Boss!',
+                  style: Styles.whiteSmall,
+                ),
+                SizedBox(
+                  height: 24,
+                )
+              ],
+            ),
+            preferredSize: Size.fromHeight(100)),
       ),
-    );
+    ));
   }
 }
