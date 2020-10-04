@@ -2,6 +2,7 @@ import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
 import 'dashboard_menu.dart';
+import 'grid.dart';
 
 class DashboardDesktop extends StatefulWidget {
   @override
@@ -9,13 +10,15 @@ class DashboardDesktop extends StatefulWidget {
 }
 
 class _DashboardDesktopState extends State<DashboardDesktop>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin
+    implements GridListener {
   AnimationController _controller;
 
   @override
   void initState() {
     _controller = AnimationController(vsync: this);
     super.initState();
+    getItems();
   }
 
   @override
@@ -55,44 +58,31 @@ class _DashboardDesktopState extends State<DashboardDesktop>
                 child: MenuItems(),
               ),
               Expanded(
-                  child: Container(
-                color: Colors.red.shade100,
-              ))
+                child: DashboardGrid(
+                  items: gridItems,
+                  gridListener: this,
+                ),
+              )
             ],
           )),
         ],
       ),
     );
   }
-}
 
-class DashboardCard extends StatelessWidget {
-  final String title, number;
-  final double titleSize, numberSize, cardWidth;
-  final Color titleColor, numberColor;
-
-  const DashboardCard(
-      {Key key,
-      @required this.title,
-      @required this.number,
-      this.titleSize,
-      this.numberSize,
-      this.titleColor,
-      this.numberColor,
-      this.cardWidth})
-      : super(key: key);
+  List<Item> gridItems = [];
+  void getItems() {
+    gridItems.add(Item(title: "Purchase Orders", number: "4,690"));
+    gridItems.add(Item(title: "Members", number: "300"));
+    gridItems.add(Item(title: "Invoices", number: "13,688"));
+    gridItems.add(Item(title: "InvoiceOffers", number: "3,566"));
+    gridItems.add(Item(title: "Accepted Offers", number: "1,800"));
+    gridItems.add(Item(title: "Payments", number: "14,950"));
+    setState(() {});
+  }
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      color: Colors.white,
-      child: Container(
-        width: cardWidth == null ? 260.0 : cardWidth,
-        child: Column(
-          children: [Text(title)],
-        ),
-      ),
-    );
+  onGridItemTapped(Item item) {
+    p('🍯 A DESKTOP dashboard item has been tapped: 🌸 ${item.title} ${item.number}');
   }
 }

@@ -1,4 +1,5 @@
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_menu.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
@@ -8,13 +9,15 @@ class DashboardMobile extends StatefulWidget {
 }
 
 class _DashboardMobileState extends State<DashboardMobile>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin
+    implements GridListener {
   AnimationController _controller;
 
   @override
   void initState() {
     _controller = AnimationController(vsync: this);
     super.initState();
+    getItems();
   }
 
   @override
@@ -45,17 +48,24 @@ class _DashboardMobileState extends State<DashboardMobile>
       ),
       drawer: DashboardMenu(),
       body: Stack(
-        children: [
-          Column(
-            children: [
-              Card(
-                elevation: 2.0,
-                color: Colors.teal.shade100,
-              )
-            ],
-          )
-        ],
+        children: [DashboardGrid(items: gridItems, gridListener: this)],
       ),
     ));
+  }
+
+  List<Item> gridItems = [];
+  void getItems() {
+    gridItems.add(Item(title: "Purchase Orders", number: "4,690"));
+    gridItems.add(Item(title: "Members", number: "300"));
+    gridItems.add(Item(title: "Invoices", number: "13,688"));
+    gridItems.add(Item(title: "InvoiceOffers", number: "3,566"));
+    gridItems.add(Item(title: "Accepted Offers", number: "1,800"));
+    gridItems.add(Item(title: "Payments", number: "14,950"));
+    setState(() {});
+  }
+
+  @override
+  onGridItemTapped(Item item) {
+    p('🌸 A MOBILE dashboard item has been tapped: 🌸 ${item.title} ${item.number}');
   }
 }
