@@ -28,8 +28,8 @@ class _DashboardDesktopState extends State<DashboardDesktop>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BFN Network Operator'),
-        backgroundColor: Colors.teal.shade400,
+        title: Text('BFN Network Boss'),
+        backgroundColor: Colors.teal.shade200,
         elevation: 0,
         bottom: PreferredSize(
             child: Column(
@@ -61,6 +61,37 @@ class _DashboardDesktopState extends State<DashboardDesktop>
             ],
           )),
         ],
+      ),
+    );
+  }
+}
+
+class DashboardCard extends StatelessWidget {
+  final String title, number;
+  final double titleSize, numberSize, cardWidth;
+  final Color titleColor, numberColor;
+
+  const DashboardCard(
+      {Key key,
+      @required this.title,
+      @required this.number,
+      this.titleSize,
+      this.numberSize,
+      this.titleColor,
+      this.numberColor,
+      this.cardWidth})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2.0,
+      color: Colors.white,
+      child: Container(
+        width: cardWidth == null ? 260.0 : cardWidth,
+        child: Column(
+          children: [Text(title)],
+        ),
       ),
     );
   }
