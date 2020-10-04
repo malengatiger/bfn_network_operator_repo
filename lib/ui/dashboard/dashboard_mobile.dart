@@ -27,14 +27,13 @@ class _DashboardMobileState extends State<DashboardMobile>
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      drawer: DashboardMenu(),
       appBar: AppBar(
         title: Text('BFN Network Operator'),
         bottom: PreferredSize(
             child: Column(
               children: [
                 Text(
-                  'This is the 🥬 Mobile Dash for the Boss!',
+                  ' 🥬 Dashboard 🥬 for Tiger aka Black Cat!!',
                   style: Styles.whiteSmall,
                 ),
                 SizedBox(
@@ -42,7 +41,20 @@ class _DashboardMobileState extends State<DashboardMobile>
                 )
               ],
             ),
-            preferredSize: Size.fromHeight(100)),
+            preferredSize: Size.fromHeight(120)),
+      ),
+      drawer: DashboardMenu(),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Card(
+                elevation: 2.0,
+                color: Colors.teal.shade100,
+              )
+            ],
+          )
+        ],
       ),
     ));
   }

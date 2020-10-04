@@ -4,39 +4,40 @@ import 'package:flutter/material.dart';
 class DashboardMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: [
-          DrawerHeader(
-            child: Text('Actions'),
-            decoration: BoxDecoration(color: Colors.grey),
-          ),
-          ListTile(
-            title: Text('Network Operator'),
-            onTap: _handleNetworkOperator,
-          ),
-          ListTile(
-            title: Text('Customers'),
-            onTap: _handleCustomers,
-          ),
-          ListTile(
-            title: Text('Network Members'),
-            onTap: _handleNetworkMembers,
-          ),
-          ListTile(
-            title: Text('Purchase Orders'),
-            onTap: _handlePurchaseOrders,
-          ),
-          ListTile(
-            title: Text('Invoices'),
-            onTap: _handleInvoices,
-          ),
-          ListTile(
-            title: Text('Invoice Offers'),
-            onTap: _handleInvoiceOffers,
-          ),
-        ],
-      ),
+    return Drawer(child: MenuItems());
+  }
+}
+
+class MenuItems extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        ListTile(
+          title: Text('Network Operator'),
+          onTap: _handleNetworkOperator,
+        ),
+        ListTile(
+          title: Text('Customers'),
+          onTap: _handleCustomers,
+        ),
+        ListTile(
+          title: Text('Network Members'),
+          onTap: _handleNetworkMembers,
+        ),
+        ListTile(
+          title: Text('Purchase Orders'),
+          onTap: _handlePurchaseOrders,
+        ),
+        ListTile(
+          title: Text('Invoices'),
+          onTap: _handleInvoices,
+        ),
+        ListTile(
+          title: Text('Invoice Offers'),
+          onTap: _handleInvoiceOffers,
+        ),
+      ],
     );
   }
 

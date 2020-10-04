@@ -27,11 +27,10 @@ class _DashboardDesktopState extends State<DashboardDesktop>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DashboardMenu(),
-      drawerScrimColor: Colors.red.shade200,
       appBar: AppBar(
         title: Text('BFN Network Operator'),
         backgroundColor: Colors.teal.shade400,
+        elevation: 0,
         bottom: PreferredSize(
             child: Column(
               children: [
@@ -45,6 +44,23 @@ class _DashboardDesktopState extends State<DashboardDesktop>
               ],
             ),
             preferredSize: Size.fromHeight(100)),
+      ),
+      body: Column(
+        children: [
+          Expanded(
+              child: Row(
+            children: [
+              Container(
+                width: 220,
+                child: MenuItems(),
+              ),
+              Expanded(
+                  child: Container(
+                color: Colors.red.shade100,
+              ))
+            ],
+          )),
+        ],
       ),
     );
   }
