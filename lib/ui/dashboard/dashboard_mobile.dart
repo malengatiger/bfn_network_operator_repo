@@ -3,6 +3,9 @@ import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
+import 'dashboard.dart';
+import 'helper.dart';
+
 class DashboardMobile extends StatefulWidget {
   @override
   _DashboardMobileState createState() => _DashboardMobileState();
@@ -10,8 +13,10 @@ class DashboardMobile extends StatefulWidget {
 
 class _DashboardMobileState extends State<DashboardMobile>
     with SingleTickerProviderStateMixin
-    implements GridListener {
+    implements GridListener, MenuListener {
   AnimationController _controller;
+  final GlobalKey<ScaffoldState> _drawerscaffoldkey =
+      new GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -30,29 +35,54 @@ class _DashboardMobileState extends State<DashboardMobile>
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-      appBar: AppBar(
-        title: Text('BFN Network Operator'),
-        bottom: PreferredSize(
-            child: Column(
-              children: [
-                Text(
-                  ' 🥬 Dashboard 🥬 for Tiger aka Black Cat!!',
-                  style: Styles.whiteSmall,
-                ),
-                SizedBox(
-                  height: 24,
-                )
+            appBar: AppBar(
+              title: Text(
+                'BFN Network Operator',
+                style: Styles.whiteSmall,
+              ),
+              actions: [
+                IconButton(
+                    icon: Icon(
+                      Icons.refresh_sharp,
+                      color: Colors.white,
+                    ),
+                    onPressed: null)
               ],
+              backgroundColor: Colors.pink[300],
+              bottom: PreferredSize(
+                  child: Column(
+                    children: [
+                      NameView(imageSize: 60.0),
+                      SizedBox(
+                        height: 20,
+                      )
+                    ],
+                  ),
+                  preferredSize: Size.fromHeight(80)),
             ),
-            preferredSize: Size.fromHeight(120)),
-      ),
-      drawer: DashboardMenu(),
-      body: Stack(
-        children: [DashboardGrid(items: gridItems, gridListener: this)],
-      ),
-    ));
+            backgroundColor: Colors.brown[50],
+            body: Scaffold(
+              drawer: DashboardMenu(this),
+              body: Stack(
+                children: [
+                  _getView(),
+                ],
+              ),
+            )));
   }
 
+  Widget _getView() {
+    if (menuAction == null) {
+      return getDashboard(gridItems, this, 2);
+    } else {
+      if (menuAction == DASHBOARD) {
+        return getDashboard(gridItems, this, 2);
+      }
+      return getContentView(menuAction);
+    }
+  }
+
+  int menuAction;
   List<Item> gridItems = [];
   void getItems() {
     gridItems.add(Item(title: "Purchase Orders", number: "4,690"));
@@ -67,5 +97,41 @@ class _DashboardMobileState extends State<DashboardMobile>
   @override
   onGridItemTapped(Item item) {
     p('🌸 A MOBILE dashboard item has been tapped: 🌸 ${item.title} ${item.number}');
+  }
+
+  @override
+  onMenuItem(int action) {
+    setState(() {
+      menuAction = action;
+    });
+    switch (action) {
+      case DASHBOARD:
+        p('🥁 A MOBILE: 😻 Dashboard menu item has been tapped: 🌸 ');
+        break;
+      case PURCHASE_ORDERS:
+        p('🥁 A MOBILE: 🍐 PurchaseOrder menu item has been tapped: 🌸 ');
+        break;
+      case INVOICES:
+        p('🥁 A MOBILE: 🍐 Invoices menu item has been tapped: 🌸 ');
+        break;
+      case INVOICE_OFFERS:
+        p('🥁 A MOBILE: 🥬 InvoiceOffers menu item has been tapped: 🌸 ');
+        break;
+      case ACCEPTED_OFFERS:
+        p('🥁 A MOBILE: 🥬 Accepted Offers menu item has been tapped: 🌸 ');
+        break;
+      case INVESTORS:
+        p('🥁 A MOBILE: 💛 Investors menu item has been tapped: 🌸 ');
+        break;
+      case SUPPLIERS:
+        p('🥁 A MOBILE: 💛 Suppliers menu item has been tapped: 🌸 ');
+        break;
+      case CUSTOMERS:
+        p('🥁 A MOBILE: 💙 Customers menu item has been tapped: 🌸 ');
+        break;
+      case NODES:
+        p('🥁 A MOBILE: 💙 Nodes menu item has been tapped: 🌸 ');
+        break;
+    }
   }
 }

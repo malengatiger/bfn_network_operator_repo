@@ -1,8 +1,10 @@
+import 'package:bfn_network_operator_repo/ui/dashboard/dashboard.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
 import 'dashboard_menu.dart';
 import 'grid.dart';
+import 'helper.dart';
 
 class DashboardDesktop extends StatefulWidget {
   @override
@@ -11,7 +13,7 @@ class DashboardDesktop extends StatefulWidget {
 
 class _DashboardDesktopState extends State<DashboardDesktop>
     with SingleTickerProviderStateMixin
-    implements GridListener {
+    implements GridListener, MenuListener {
   AnimationController _controller;
 
   @override
@@ -30,44 +32,56 @@ class _DashboardDesktopState extends State<DashboardDesktop>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('BFN Network Boss'),
-        backgroundColor: Colors.teal.shade200,
-        elevation: 0,
-        bottom: PreferredSize(
-            child: Column(
-              children: [
-                Text(
-                  'This is the  🍊 Desktop Dash for the Boss!',
-                  style: Styles.whiteSmall,
-                ),
-                SizedBox(
-                  height: 24,
-                )
-              ],
-            ),
-            preferredSize: Size.fromHeight(100)),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-              child: Row(
-            children: [
-              Container(
-                width: 220,
-                child: MenuItems(),
+        appBar: AppBar(
+          title: Text('BFN Network Boss'),
+          backgroundColor: Colors.teal.shade200,
+          elevation: 0,
+          bottom: PreferredSize(
+              child: Column(
+                children: [
+                  NameView(imageSize: 100.0),
+                  SizedBox(
+                    height: 40,
+                  )
+                ],
               ),
-              Expanded(
-                child: DashboardGrid(
-                  items: gridItems,
-                  gridListener: this,
+              preferredSize: Size.fromHeight(100)),
+        ),
+        backgroundColor: Colors.brown[50],
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                SizedBox(
+                  height: 40,
                 ),
-              )
-            ],
-          )),
-        ],
-      ),
-    );
+                Expanded(
+                    child: Row(
+                  children: [
+                    Container(
+                      width: 220,
+                      child: MenuItems(this),
+                    ),
+                    Expanded(
+                      child: _getView(),
+                    )
+                  ],
+                )),
+              ],
+            )
+          ],
+        ));
+  }
+
+  Widget _getView() {
+    if (menuAction == null) {
+      return getDashboard(gridItems, this, 3);
+    } else {
+      if (menuAction == DASHBOARD) {
+        return getDashboard(gridItems, this, 3);
+      }
+      return getContentView(menuAction);
+    }
   }
 
   List<Item> gridItems = [];
@@ -84,5 +98,43 @@ class _DashboardDesktopState extends State<DashboardDesktop>
   @override
   onGridItemTapped(Item item) {
     p('🍯 A DESKTOP dashboard item has been tapped: 🌸 ${item.title} ${item.number}');
+  }
+
+  int menuAction;
+  @override
+  onMenuItem(int action) {
+    setState(() {
+      menuAction = action;
+    });
+
+    switch (action) {
+      case DASHBOARD:
+        p('🥁 A DESKTOP/WEB: 😻 Dashboard menu item has been tapped: 🌸 ');
+        break;
+      case PURCHASE_ORDERS:
+        p('🥁 A DESKTOP/WEB: 🍐 PurchaseOrder menu item has been tapped: 🌸 ');
+        break;
+      case INVOICES:
+        p('🥁 A DESKTOP/WEB: 🍐 Invoices menu item has been tapped: 🌸 ');
+        break;
+      case INVOICE_OFFERS:
+        p('🥁 A DESKTOP/WEB: 🥬 InvoiceOffers menu item has been tapped: 🌸 ');
+        break;
+      case ACCEPTED_OFFERS:
+        p('🥁 A DESKTOP/WEB: 🥬 Accepted Offers menu item has been tapped: 🌸 ');
+        break;
+      case INVESTORS:
+        p('🥁 A DESKTOP/WEB: 💛 Investors menu item has been tapped: 🌸 ');
+        break;
+      case SUPPLIERS:
+        p('🥁 A DESKTOP/WEB: 💛 Suppliers menu item has been tapped: 🌸 ');
+        break;
+      case CUSTOMERS:
+        p('🥁 A DESKTOP/WEB: 💙 Customers menu item has been tapped: 🌸 ');
+        break;
+      case NODES:
+        p('🥁 A DESKTOP/WEB: 💙 Nodes menu item has been tapped: 🌸 ');
+        break;
+    }
   }
 }

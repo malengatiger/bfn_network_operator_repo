@@ -57,3 +57,40 @@ class _DashboardState extends State<Dashboard>
     );
   }
 }
+
+class NameView extends StatelessWidget {
+  final String imageName, title;
+  final double imageSize;
+  final TextStyle titleStyle;
+
+  const NameView(
+      {Key key,
+      this.imageName,
+      this.title,
+      @required this.imageSize,
+      this.titleStyle})
+      : super(key: key);
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 20,
+        ),
+        Image.asset(
+          imageName == null ? 'assets/logo.png' : imageName,
+          width: imageSize,
+          height: imageSize,
+          color: Colors.white,
+        ),
+        SizedBox(
+          width: 8,
+        ),
+        Text(
+          title == null ? 'Business Finance Network Ltd' : title,
+          style: titleStyle == null ? Styles.whiteBoldSmall : titleStyle,
+        )
+      ],
+    );
+  }
+}

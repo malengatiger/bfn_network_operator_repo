@@ -6,16 +6,24 @@ import 'card.dart';
 class DashboardGrid extends StatelessWidget implements GridListener {
   final List<Item> items;
   final GridListener gridListener;
+  final int crossAxisCount, mainAxisSpacing, crossAxisSpacing;
 
   const DashboardGrid(
-      {Key key, @required this.items, @required this.gridListener})
+      {Key key,
+      @required this.items,
+      @required this.gridListener,
+      this.crossAxisCount,
+      this.mainAxisSpacing,
+      this.crossAxisSpacing})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     p('create the GridView ....... ');
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, mainAxisSpacing: 2, crossAxisSpacing: 2),
+          crossAxisCount: crossAxisCount == null ? 2 : crossAxisCount,
+          mainAxisSpacing: mainAxisSpacing == null ? 2 : mainAxisSpacing,
+          crossAxisSpacing: crossAxisSpacing == null ? 2 : crossAxisSpacing),
       itemCount: items.length,
       itemBuilder: (BuildContext context, int index) {
         var item = items.elementAt(index);
