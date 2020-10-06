@@ -50,14 +50,12 @@ abstract class GridListener {
 
 class Item {
   final String title, number;
-  final double titleSize, numberSize, cardWidth;
+  final double cardWidth;
   final TextStyle titleStyle, numberStyle;
 
   Item(
       {this.title,
       this.number,
-      this.titleSize,
-      this.numberSize,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle});

@@ -32,7 +32,7 @@ class _DashboardTabletState extends State<DashboardTablet>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: DashboardMenu(this),
+      // drawer: DashboardMenu(this),
       appBar: AppBar(
         title: Text(
           'BFN Network Operator',
@@ -43,9 +43,13 @@ class _DashboardTabletState extends State<DashboardTablet>
         bottom: PreferredSize(
             child: Column(
               children: [
-                NameView(imageSize: 80.0),
+                NameView(
+                  paddingLeft: 100,
+                  imageSize: 48.0,
+                  titleStyle: Styles.whiteBoldMedium,
+                ),
                 SizedBox(
-                  height: 40,
+                  height: 24,
                 )
               ],
             ),

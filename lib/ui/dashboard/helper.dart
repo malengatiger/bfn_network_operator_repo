@@ -8,15 +8,55 @@ import 'dashboard_menu.dart';
 import 'grid.dart';
 
 List<Item> gridItems = [];
-void getItems() {
-  gridItems.add(Item(title: "Purchase Orders", number: "4,690"));
-  gridItems.add(Item(title: "Invoices", number: "13,688"));
-  gridItems.add(Item(title: "InvoiceOffers", number: "3,566"));
-  gridItems.add(Item(title: "Accepted Offers", number: "1,800"));
-  gridItems.add(Item(title: "Payments", number: "14,950"));
-  gridItems.add(Item(title: "Customers", number: "300"));
-  gridItems.add(Item(title: "Suppliers", number: "34,808"));
-  gridItems.add(Item(title: "Customers", number: "300"));
+List<Item> getDashboardGridItems(
+    {TextStyle titleStyle, TextStyle numberStyle}) {
+  gridItems.clear();
+  gridItems.add(Item(
+      title: "Purchase Orders",
+      number: "4,690",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Invoices",
+      number: "13,688",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "InvoiceOffers",
+      number: "3,566",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Accepted Offers",
+      number: "1,800",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Payments",
+      number: "14,950",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Investors",
+      number: "300",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Suppliers",
+      number: "34,808",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Customers",
+      number: "27",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  gridItems.add(Item(
+      title: "Network Nodes",
+      number: "3",
+      titleStyle: titleStyle,
+      numberStyle: numberStyle));
+  return gridItems;
 }
 
 Widget getContentView(int menuAction) {

@@ -1,8 +1,10 @@
+import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_desktop.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_mobile.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_tablet.dart';
 import 'package:bfnlibrary/util/fb_util.dart';
 import 'package:bfnlibrary/util/functions.dart';
+import 'package:bfnlibrary/util/prefs.dart';
 import 'package:bfnlibrary/util/stellar_lib.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +26,7 @@ class _DashboardState extends State<Dashboard>
     Firebase.initializeApp().whenComplete(() {
       print("🥦 Firebase.initializeApp() 🥦🥦🥦🥦 completed");
       _pingStellar();
+      _checkUser();
       setState(() {});
     });
   }
@@ -48,6 +51,33 @@ class _DashboardState extends State<Dashboard>
     super.dispose();
   }
 
+  void _checkUser() async {
+    var testUser = const String.fromEnvironment("user");
+    var son = const String.fromEnvironment("son");
+    p('Property user from environment: 🔵  🔵  🔵 $testUser son: $son');
+    var isLoggedIn = await FireBaseUtil.isUserLoggedIn();
+    p("🍊  🍊  🍊 The user is loggedIn:  🥦 $isLoggedIn  🥦");
+    var nodes = await dataBloc.getNetworkNodes();
+    nodes.forEach((element) {
+      p("🍎🍎🍎 Node found on Firestore: 🍎🍎🍎 "
+          "${prettyPrint(element.toJson(), 'Node JSON')}");
+    });
+    if (nodes.isNotEmpty) {
+      await Prefs.saveNodes(nodes);
+      await Prefs.saveNode(nodes.elementAt(0));
+    }
+    var suppliers = await dataBloc.getSupplierProfiles();
+    suppliers.forEach((element) {
+      p(" 🥦🥦🥦🥦  Supplier found on Firestore:  🥦🥦🥦🥦 "
+          "${prettyPrint(element.toJson(), 'Supplier JSON')}");
+    });
+    var investors = await dataBloc.getInvestorProfiles();
+    investors.forEach((element) {
+      p("💛 💛 💛 💛  Investor found on Firestore:  💛 💛 💛 💛 "
+          "${prettyPrint(element.toJson(), 'Investor JSON')}");
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScreenTypeLayout(
@@ -62,20 +92,22 @@ class NameView extends StatelessWidget {
   final String imageName, title;
   final double imageSize;
   final TextStyle titleStyle;
+  final double paddingLeft;
 
   const NameView(
       {Key key,
       this.imageName,
       this.title,
       @required this.imageSize,
-      this.titleStyle})
+      this.titleStyle,
+      this.paddingLeft})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
         SizedBox(
-          width: 20,
+          width: paddingLeft == null ? 60 : paddingLeft,
         ),
         Image.asset(
           imageName == null ? 'assets/logo.png' : imageName,

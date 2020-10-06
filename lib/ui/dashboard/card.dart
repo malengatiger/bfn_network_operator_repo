@@ -39,13 +39,17 @@ class DashboardCard extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: Column(
               children: [
+                SizedBox(height: 20),
                 Text(item.title,
-                    style: titleStyle == null ? Styles.blackSmall : titleStyle),
+                    style: item.titleStyle == null
+                        ? Styles.blackSmall
+                        : item.titleStyle),
                 SizedBox(height: 20),
                 Text(
                   item.number,
-                  style:
-                      numberStyle == null ? Styles.blackBoldLarge : numberStyle,
+                  style: item.numberStyle == null
+                      ? Styles.blackBoldLarge
+                      : item.numberStyle,
                 ),
               ],
             ),

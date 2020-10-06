@@ -52,7 +52,11 @@ class _DashboardMobileState extends State<DashboardMobile>
               bottom: PreferredSize(
                   child: Column(
                     children: [
-                      NameView(imageSize: 60.0),
+                      NameView(
+                        paddingLeft: 20,
+                        imageSize: 32.0,
+                        titleStyle: Styles.whiteSmall,
+                      ),
                       SizedBox(
                         height: 20,
                       )
@@ -85,12 +89,8 @@ class _DashboardMobileState extends State<DashboardMobile>
   int menuAction;
   List<Item> gridItems = [];
   void getItems() {
-    gridItems.add(Item(title: "Purchase Orders", number: "4,690"));
-    gridItems.add(Item(title: "Members", number: "300"));
-    gridItems.add(Item(title: "Invoices", number: "13,688"));
-    gridItems.add(Item(title: "InvoiceOffers", number: "3,566"));
-    gridItems.add(Item(title: "Accepted Offers", number: "1,800"));
-    gridItems.add(Item(title: "Payments", number: "14,950"));
+    gridItems = getDashboardGridItems(
+        titleStyle: Styles.blackSmall, numberStyle: Styles.blueBoldLarge);
     setState(() {});
   }
 
