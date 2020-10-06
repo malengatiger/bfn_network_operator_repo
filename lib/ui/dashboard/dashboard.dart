@@ -4,7 +4,6 @@ import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_mobile.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_tablet.dart';
 import 'package:bfnlibrary/util/fb_util.dart';
 import 'package:bfnlibrary/util/functions.dart';
-import 'package:bfnlibrary/util/prefs.dart';
 import 'package:bfnlibrary/util/stellar_lib.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -52,30 +51,20 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _checkUser() async {
+    _getData();
     var testUser = const String.fromEnvironment("user");
     var son = const String.fromEnvironment("son");
     p('Property user from environment: 🔵  🔵  🔵 $testUser son: $son');
     var isLoggedIn = await FireBaseUtil.isUserLoggedIn();
     p("🍊  🍊  🍊 The user is loggedIn:  🥦 $isLoggedIn  🥦");
-    var nodes = await dataBloc.getNetworkNodes();
-    nodes.forEach((element) {
-      p("🍎🍎🍎 Node found on Firestore: 🍎🍎🍎 "
-          "${prettyPrint(element.toJson(), 'Node JSON')}");
-    });
-    if (nodes.isNotEmpty) {
-      await Prefs.saveNodes(nodes);
-      await Prefs.saveNode(nodes.elementAt(0));
-    }
-    var suppliers = await dataBloc.getSupplierProfiles();
-    suppliers.forEach((element) {
-      p(" 🥦🥦🥦🥦  Supplier found on Firestore:  🥦🥦🥦🥦 "
-          "${prettyPrint(element.toJson(), 'Supplier JSON')}");
-    });
-    var investors = await dataBloc.getInvestorProfiles();
-    investors.forEach((element) {
-      p("💛 💛 💛 💛  Investor found on Firestore:  💛 💛 💛 💛 "
-          "${prettyPrint(element.toJson(), 'Investor JSON')}");
-    });
+    await dataBloc.getNetworkNodes();
+  }
+
+  void _getData() {
+    var now = DateTime.now();
+    var then = now.subtract(Duration(days: 35));
+    dataBloc.refreshDashboard(
+        startDate: then.toIso8601String(), endDate: now.toIso8601String());
   }
 
   @override
@@ -125,4 +114,59 @@ class NameView extends StatelessWidget {
       ],
     );
   }
+}
+
+class DateRange extends StatefulWidget {
+  @override
+  _DateRangeState createState() => _DateRangeState();
+}
+
+class _DateRangeState extends State<DateRange> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          InkWell(
+            child: Text('Start Date'),
+            onTap: _openStartCalendar,
+          ),
+          SizedBox(
+            width: 80,
+          ),
+          InkWell(
+            child: Text('End Date'),
+            onTap: _openEndCalendar,
+          ),
+          SizedBox(
+            width: 80,
+          ),
+          FlatButton(
+            child: Text('Refresh'),
+            onPressed: _refreshData,
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openStartCalendar() {
+    showDatePicker(
+      context: context,
+      initialDatePickerMode: DatePickerMode.day,
+      firstDate: null,
+      initialDate: DateTime.now(),
+      lastDate: DateTime.now(),
+    );
+  }
+
+  void _openEndCalendar() {}
+
+  void _refreshData() {}
 }

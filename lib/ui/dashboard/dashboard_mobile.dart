@@ -1,7 +1,10 @@
+import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_menu.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
+import 'package:bfn_network_operator_repo/ui/my_date_picker.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 import 'dashboard.dart';
 import 'helper.dart';
@@ -13,7 +16,7 @@ class DashboardMobile extends StatefulWidget {
 
 class _DashboardMobileState extends State<DashboardMobile>
     with SingleTickerProviderStateMixin
-    implements GridListener, MenuListener {
+    implements GridListener, MenuListener, DateListener {
   AnimationController _controller;
   final GlobalKey<ScaffoldState> _drawerscaffoldkey =
       new GlobalKey<ScaffoldState>();
@@ -31,6 +34,7 @@ class _DashboardMobileState extends State<DashboardMobile>
     super.dispose();
   }
 
+  String startDate, endDate;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,7 +50,16 @@ class _DashboardMobileState extends State<DashboardMobile>
                       Icons.refresh_sharp,
                       color: Colors.white,
                     ),
-                    onPressed: null)
+                    onPressed: () {
+                      dataBloc.refreshDashboard(
+                          startDate: startDate, endDate: endDate);
+                    }),
+                IconButton(
+                    icon: Icon(
+                      Icons.calendar_today_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: _navigateToDateRange),
               ],
               backgroundColor: Colors.pink[300],
               bottom: PreferredSize(
@@ -70,6 +83,20 @@ class _DashboardMobileState extends State<DashboardMobile>
               body: Stack(
                 children: [
                   _getView(),
+                  // Positioned(
+                  //   bottom: 50,
+                  //   right: 50,
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(8.0),
+                  //     child: Card(
+                  //         color: Colors.teal[200],
+                  //         child: SfDateRangePicker(
+                  //           minDate:
+                  //               DateTime.now().subtract(Duration(days: 90)),
+                  //           maxDate: DateTime.now(),
+                  //         )),
+                  //   ),
+                  // )
                 ],
               ),
             )));
@@ -133,5 +160,27 @@ class _DashboardMobileState extends State<DashboardMobile>
         p('🥁 A MOBILE: 💙 Nodes menu item has been tapped: 🌸 ');
         break;
     }
+  }
+
+  void _navigateToDateRange() async {
+    await Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.scale,
+            alignment: Alignment.topLeft,
+            duration: Duration(seconds: 1),
+            child: MyDatePicker(
+              dateListener: this,
+            )));
+    print('🤟🤟🤟🤟🤟🤟🤟🤟 User returned from date pickin ... ');
+  }
+
+  @override
+  onRangeSelected(DateTime startDate, DateTime endDate) {
+    p('🍎DashboardMobile: onRangeSelected; 🍎 startDate : $startDate '
+        '🍎 endDate: $endDate 🍎 calling  dataBloc.refreshDashboard');
+    dataBloc.refreshDashboard(
+        startDate: startDate.toIso8601String(),
+        endDate: endDate.toIso8601String());
   }
 }
