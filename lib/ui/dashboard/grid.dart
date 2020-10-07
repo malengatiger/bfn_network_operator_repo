@@ -1,16 +1,15 @@
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
-import 'card.dart';
-
 class DashboardGrid extends StatelessWidget implements GridListener {
-  final List<Item> items;
+  final List<Widget> widgets;
   final GridListener gridListener;
-  final int crossAxisCount, mainAxisSpacing, crossAxisSpacing;
+  final int crossAxisCount;
+  final double mainAxisSpacing, crossAxisSpacing;
 
   const DashboardGrid(
       {Key key,
-      @required this.items,
+      @required this.widgets,
       @required this.gridListener,
       this.crossAxisCount,
       this.mainAxisSpacing,
@@ -18,34 +17,31 @@ class DashboardGrid extends StatelessWidget implements GridListener {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    p('create the GridView ....... ');
+    p('🔵🔵🔵 ...... create the GridView ....... ');
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: crossAxisCount == null ? 2 : crossAxisCount,
           mainAxisSpacing: mainAxisSpacing == null ? 2 : mainAxisSpacing,
           crossAxisSpacing: crossAxisSpacing == null ? 2 : crossAxisSpacing),
-      itemCount: items.length,
+      itemCount: widgets.length,
       itemBuilder: (BuildContext context, int index) {
-        var item = items.elementAt(index);
-        return DashboardCard(
-          item: item,
-          gridListener: this,
-        );
+        var item = widgets.elementAt(index);
+        return item;
       },
     );
   }
 
   @override
-  onGridItemTapped(Item item) {
-    p('DashboardGrid: 🔔🔔🔔 onGridItemTapped. telling listener ... 🔔 ${item.title} ${item.number}');
+  onGridItemTapped(int index) {
+    p('DashboardGrid: 🔔🔔🔔 onGridItemTapped. telling listener ... 🔔 index: $index');
     if (gridListener != null) {
-      gridListener.onGridItemTapped(item);
+      gridListener.onGridItemTapped(index);
     }
   }
 }
 
 abstract class GridListener {
-  onGridItemTapped(Item item);
+  onGridItemTapped(int index);
 }
 
 class Item {

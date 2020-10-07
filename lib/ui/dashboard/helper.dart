@@ -1,5 +1,10 @@
-import 'package:bfn_network_operator_repo/ui/lists/customers/customers.dart';
-import 'package:bfn_network_operator_repo/ui/lists/investors/investors.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/accepted_offer_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/customer_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/investor_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/invoice_offer_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/invoice_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/purchase_order_viewer.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/supplier_payments_viewer.dart';
 import 'package:bfn_network_operator_repo/ui/lists/suppliers/suppliers.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
@@ -7,74 +12,59 @@ import 'package:flutter/material.dart';
 import 'dashboard_menu.dart';
 import 'grid.dart';
 
-List<Item> gridItems = [];
-List<Item> getDashboardGridItems(
-    {TextStyle titleStyle, TextStyle numberStyle}) {
-  gridItems.clear();
-  gridItems.add(Item(
-      title: "Purchase Orders",
-      number: "4,690",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Invoices",
-      number: "13,688",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "InvoiceOffers",
-      number: "3,566",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Accepted Offers",
-      number: "1,800",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Payments",
-      number: "14,950",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Investors",
-      number: "300",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Suppliers",
-      number: "34,808",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Customers",
-      number: "27",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  gridItems.add(Item(
-      title: "Network Nodes",
-      number: "3",
-      titleStyle: titleStyle,
-      numberStyle: numberStyle));
-  return gridItems;
+const String DASHBOARD_WIDGET = 'dashboardWidget', LIST_WIDGET = 'listWidget';
+
+Widget getDashboardWidget(
+    {@required int crossAxisCount,
+    @required double crossAxisSpacing,
+    @required double mainAxisSpacing,
+    String startDate,
+    String endDate,
+    GridListener gridListener}) {
+  var list = List<Widget>();
+  list.add(CustomerProfileViewer(widgetType: DASHBOARD_WIDGET));
+  list.add(InvestorProfileViewer(widgetType: DASHBOARD_WIDGET));
+  list.add(PurchaseOrderViewer(
+      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+  list.add(InvoiceViewer(
+      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+  list.add(InvoiceOfferViewer(
+      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+  list.add(AcceptedOfferViewer(
+      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+  list.add(SupplierPaymentViewer(
+      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+
+  return DashboardGrid(
+      crossAxisCount: crossAxisCount,
+      crossAxisSpacing: crossAxisSpacing,
+      mainAxisSpacing: mainAxisSpacing,
+      widgets: list,
+      gridListener: gridListener);
 }
 
-Widget getContentView(int menuAction) {
+Widget getContentView({int menuAction, String startDate, String endDate}) {
   switch (menuAction) {
     case CUSTOMERS:
-      return CustomerList();
+      return CustomerProfileViewer(widgetType: LIST_WIDGET);
     case INVESTORS:
-      return InvestorList();
+      return InvestorProfileViewer(
+        widgetType: LIST_WIDGET,
+      );
     case SUPPLIERS:
       return SupplierList();
     case PURCHASE_ORDERS:
-      return _getContainer('PURCHASE_ORDERS');
+      return PurchaseOrderViewer(
+          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
     case INVOICES:
-      return _getContainer('INVOICES');
+      return InvoiceViewer(
+          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
     case INVOICE_OFFERS:
-      return _getContainer('INVOICE_OFFERS');
+      return InvoiceOfferViewer(
+          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
     case SUPPLIER_PAYMENTS:
-      return _getContainer('SUPPLIER_PAYMENTS');
+      return SupplierPaymentViewer(
+          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
     case PAYMENT_REQUESTS:
       return _getContainer('Missing PAYMENT_REQUESTS');
     case NODES:
@@ -93,13 +83,4 @@ Widget _getContainer(String text) {
         ),
       ),
       color: Colors.amber[200]);
-}
-
-DashboardGrid getDashboard(
-    List<Item> gridItems, GridListener gridListener, int crossAxisCount) {
-  return DashboardGrid(
-    items: gridItems,
-    gridListener: gridListener,
-    crossAxisCount: crossAxisCount,
-  );
 }

@@ -29,7 +29,10 @@ class MenuItems extends StatelessWidget {
           height: 36,
         ),
         ListTile(
-          title: Text('DashBoard'),
+          title: Text(
+            'DashBoard',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.network_check,
             color: Colors.black,
@@ -41,11 +44,17 @@ class MenuItems extends StatelessWidget {
             Icons.people,
             color: Colors.blue,
           ),
-          title: Text('Customers'),
+          title: Text(
+            'Customers',
+            style: Styles.blackSmall,
+          ),
           onTap: _handleCustomers,
         ),
         ListTile(
-          title: Text('Suppliers'),
+          title: Text(
+            'Suppliers',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.people_outline,
             color: Colors.indigo,
@@ -53,7 +62,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handleSuppliers,
         ),
         ListTile(
-          title: Text('Investors'),
+          title: Text(
+            'Investors',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.people_outline,
             color: Colors.indigo,
@@ -61,7 +73,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handleInvestors,
         ),
         ListTile(
-          title: Text('Purchase Orders'),
+          title: Text(
+            'Purchase Orders',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.all_inbox_rounded,
             color: Colors.pink,
@@ -69,7 +84,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handlePurchaseOrders,
         ),
         ListTile(
-          title: Text('Invoices'),
+          title: Text(
+            'Invoices',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.article_sharp,
             color: Colors.teal,
@@ -77,7 +95,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handleInvoices,
         ),
         ListTile(
-          title: Text('Invoice Offers'),
+          title: Text(
+            'Invoice Offers',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.auto_awesome_motion,
             color: Colors.deepPurple,
@@ -85,7 +106,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handleInvoiceOffers,
         ),
         ListTile(
-          title: Text('Supplier Payments'),
+          title: Text(
+            'Supplier Payments',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.monetization_on,
             color: Colors.black,
@@ -93,7 +117,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handleSupplierPayments,
         ),
         ListTile(
-          title: Text('Payment Requests'),
+          title: Text(
+            'Payment Requests',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.monetization_on,
             color: Colors.grey,
@@ -101,7 +128,10 @@ class MenuItems extends StatelessWidget {
           onTap: _handlePaymentRequests,
         ),
         ListTile(
-          title: Text('Network Nodes'),
+          title: Text(
+            'Network Nodes',
+            style: Styles.blackSmall,
+          ),
           leading: Icon(
             Icons.network_wifi,
             color: Colors.amber[900],
