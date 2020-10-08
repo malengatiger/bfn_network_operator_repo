@@ -20,14 +20,14 @@ class MenuItems extends StatelessWidget {
     return ListView(
       children: [
         SizedBox(
-          height: 2,
+          height: 48,
         ),
-        Image.asset(
-          'assets/logo.png',
-          color: Colors.indigo[600],
-          width: 36,
-          height: 36,
-        ),
+        // Image.asset(
+        //   'assets/logo.png',
+        //   color: Colors.indigo[600],
+        //   width: 36,
+        //   height: 36,
+        // ),
         ListTile(
           title: Text(
             'DashBoard',

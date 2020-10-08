@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/helper.dart';
 import 'package:bfnlibrary/data/purchase_order.dart';
@@ -212,39 +214,19 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
     List<DataColumn> cols = [];
     List<DataRow> rows = [];
     var orientation = MediaQuery.of(context).orientation;
-    cols.add(DataColumn(
-        label: Text(
-      'Customer',
-      style: Styles.greyLabelSmall,
-    )));
-    cols.add(DataColumn(
-        label: Text(
-      'Supplier',
-      style: Styles.greyLabelSmall,
-    )));
+    _getPeople(cols);
     if (orientation == Orientation.landscape) {
-      cols.add(DataColumn(
-          label: Text(
-        'PO Number',
-        style: Styles.greyLabelSmall,
-      )));
+      _getAmount(cols);
       cols.add(DataColumn(
           label: Text(
         'Date',
         style: Styles.greyLabelSmall,
       )));
-    }
-    cols.add(DataColumn(
-        label: Text(
-      'Amount',
-      style: Styles.blackBoldSmall,
-    )));
-
-    if (orientation == Orientation.landscape) {
       list.forEach((item) {
-        prettyPrint(item.toJson(), "🔷 🔷 Purchase Order 🔷 🔷 🔷");
+        prettyPrint(item.toJson(), "🔷 🔷 Purchase Order Landscape 🔷 🔷 🔷");
         var date = DateTime.parse(item.dateRegistered);
         String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+        String formattedAmount = _getFormattedAmount(item);
         rows.add(DataRow(cells: [
           DataCell(Text(
             item.customer.name,
@@ -252,40 +234,50 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
           )),
           DataCell(Text(
             item.supplier.name,
-            style: Styles.blackSmall,
+            style: Styles.purpleSmall,
           )),
-          DataCell(Text(item.purchaseOrderNumber)),
-          DataCell(Text(formattedDate)),
+          // DataCell(Text(item.purchaseOrderNumber)),
           DataCell(Text(
-            item.amount,
+            formattedAmount,
+            textScaleFactor: 1.2,
             style: Styles.blackBoldSmall,
           )),
+          DataCell(Text(formattedDate)),
         ]));
       });
     } else {
+      _getAmount(cols);
       list.forEach((item) {
-        prettyPrint(item.toJson(), "🔷 🔷 Purchase Order 🔷 🔷 🔷");
-        var date = DateTime.parse(item.dateRegistered);
-        String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+        prettyPrint(item.toJson(), "🔷 🔷 Purchase Order : Portrait 🔷 🔷 🔷");
+        String formattedAmount = _getFormattedAmount(item);
         rows.add(DataRow(cells: [
-          DataCell(Text(
-            item.customer.name,
-            style: Styles.blackBoldSmall,
-          )),
-          DataCell(Text(
+          DataCell(
+            Text(
+              item.customer.name,
+              style: Styles.blackBoldSmall,
+            ),
+          ),
+          // DataCell(),
+          DataCell(Expanded(
+              child: Text(
             item.supplier.name,
-            style: Styles.blackSmall,
-          )),
-          // DataCell(Text(item.purchaseOrderNumber)),
+            style: Styles.purpleSmall,
+          ))),
           // DataCell(Text(formattedDate)),
           DataCell(Text(
-            item.amount,
+            formattedAmount,
+            textScaleFactor: 1.2,
             style: Styles.blackBoldSmall,
           )),
         ]));
       });
     }
-    DataTable table = DataTable(columns: cols, rows: rows);
+
+    DataTable table = DataTable(
+      columns: cols,
+      rows: rows,
+      columnSpacing: 12,
+    );
     return ListView(
       children: [
         Column(
@@ -302,6 +294,34 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
         ),
       ],
     );
+  }
+
+  String _getFormattedAmount(PurchaseOrder item) {
+    double amt = double.parse(item.amount);
+    var formattedAmount =
+        NumberFormat.currency(symbol: 'R', decimalDigits: 2).format(amt);
+    return formattedAmount;
+  }
+
+  void _getAmount(List<DataColumn> cols) {
+    cols.add(DataColumn(
+        label: Text(
+      'Amount',
+      style: Styles.greyLabelSmall,
+    )));
+  }
+
+  void _getPeople(List<DataColumn> cols) {
+    cols.add(DataColumn(
+        label: Text(
+      'Customer',
+      style: Styles.greyLabelSmall,
+    )));
+    cols.add(DataColumn(
+        label: Text(
+      'Supplier',
+      style: Styles.greyLabelSmall,
+    )));
   }
 
   Widget _getDesktopListWidget() {

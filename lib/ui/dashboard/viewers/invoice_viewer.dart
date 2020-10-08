@@ -245,7 +245,11 @@ class _InvoiceViewerState extends State<InvoiceViewer>
         DataCell(Text(item.amount)),
       ]));
     });
-    DataTable table = DataTable(columns: cols, rows: rows);
+    DataTable table = DataTable(
+      columns: cols,
+      rows: rows,
+      columnSpacing: 1,
+    );
     return ListView(
       children: [
         Column(

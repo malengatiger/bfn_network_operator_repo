@@ -4,6 +4,7 @@ import 'package:bfnlibrary/data/profile.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class CustomerProfileViewer extends StatefulWidget {
@@ -194,37 +195,54 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
 
     if (orientation == Orientation.landscape) {
       list.forEach((item) {
+        var max = double.parse(item.maximumInvoiceAmount);
+        var min = double.parse(item.minimumInvoiceAmount);
+        var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+        var formattedMax = curr.format(max);
+        var formattedMin = curr.format(min);
         rows.add(DataRow(cells: [
           DataCell(Text(
             item.account.name,
             style: Styles.blackBoldSmall,
           )),
-          DataCell(Text(item.maximumInvoiceAmount)),
-          DataCell(Text(item.minimumInvoiceAmount)),
+          DataCell(Text(formattedMax)),
+          DataCell(Text(formattedMin)),
           DataCell(Text(item.cellphone)),
         ]));
       });
     } else {
       list.forEach((item) {
+        var max = double.parse(item.maximumInvoiceAmount);
+        var min = double.parse(item.minimumInvoiceAmount);
+        var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+        var formattedMax = curr.format(max);
+        var formattedMin = curr.format(min);
         rows.add(DataRow(cells: [
           DataCell(Text(
             item.account.name,
             style: Styles.blackBoldSmall,
           )),
-          DataCell(Text(item.maximumInvoiceAmount)),
-          DataCell(Text(item.minimumInvoiceAmount)),
+          DataCell(Text(formattedMax)),
+          DataCell(Text(formattedMin)),
         ]));
       });
     }
-    DataTable table = DataTable(columns: cols, rows: rows);
+    DataTable table = DataTable(
+      columns: cols,
+      rows: rows,
+      columnSpacing: orientation == Orientation.landscape ? 48 : 24,
+    );
     return Column(
       children: [
+        SizedBox(
+          height: 40,
+        ),
         Text(
           dashTitle,
           style: Styles.blackBoldMedium,
         ),
         SizedBox(
-          height: 20,
+          height: 40,
         ),
         table,
       ],

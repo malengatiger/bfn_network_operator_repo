@@ -4,6 +4,7 @@ import 'package:bfnlibrary/data/profile.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
 class InvestorProfileViewer extends StatefulWidget {
@@ -165,6 +166,7 @@ class _InvestorProfileViewerState extends State<InvestorProfileViewer>
   Widget _getTabletListWidget() {
     List<DataColumn> cols = [];
     List<DataRow> rows = [];
+    var orientation = MediaQuery.of(context).orientation;
 
     cols.add(DataColumn(
         label: Text(
@@ -183,33 +185,84 @@ class _InvestorProfileViewerState extends State<InvestorProfileViewer>
       style: Styles.greyLabelSmall,
     )));
     cols.add(DataColumn(
-        label: Text(
-      'Discount',
-      style: Styles.greyLabelSmall,
+        label: Expanded(
+      child: Text(
+        'Default\nDiscount',
+        style: Styles.greyLabelSmall,
+      ),
     )));
+    if (orientation == Orientation.landscape) {
+      cols.add(DataColumn(
+          label: Expanded(
+        child: Text(
+          'Trade\nMatrix',
+          style: Styles.greyLabelSmall,
+        ),
+      )));
+    }
 
     list.forEach((item) {
-      rows.add(DataRow(cells: [
+      var max = double.parse(item.maximumInvoiceAmount);
+      var min = double.parse(item.minimumInvoiceAmount);
+      var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+      var formattedMax = curr.format(max);
+      var formattedMin = curr.format(min);
+      var landscapeRow = DataRow(cells: [
         DataCell(Text(
           item.account.name,
           style: Styles.blackBoldSmall,
         )),
-        DataCell(Text(item.maximumInvoiceAmount)),
-        DataCell(Text(item.minimumInvoiceAmount)),
-        DataCell(Text(item.defaultDiscount)),
-      ]));
+        DataCell(Text(formattedMax)),
+        DataCell(Text(formattedMin)),
+        DataCell(Text(
+          '${item.defaultDiscount} %',
+          style: Styles.purpleSmall,
+        )),
+        DataCell(Text(
+          '${item.tradeMatrixItems.length}',
+          style: Styles.blackSmall,
+        )),
+      ]);
+      var portraitRow = DataRow(cells: [
+        DataCell(Text(
+          item.account.name,
+          style: Styles.blackBoldSmall,
+        )),
+        DataCell(Text(formattedMax)),
+        DataCell(Text(formattedMin)),
+        DataCell(Text(
+          '${item.defaultDiscount} %',
+          style: Styles.purpleSmall,
+        )),
+      ]);
+      if (orientation == Orientation.landscape) {
+        rows.add(landscapeRow);
+      } else {
+        rows.add(portraitRow);
+      }
     });
-    DataTable table = DataTable(columns: cols, rows: rows);
-    return Column(
+    DataTable table = DataTable(
+      columns: cols,
+      rows: rows,
+      columnSpacing: orientation == Orientation.landscape ? 60 : 8,
+    );
+    return ListView(
       children: [
-        Text(
-          dashTitle,
-          style: Styles.blackBoldMedium,
+        Column(
+          children: [
+            SizedBox(
+              height: 24,
+            ),
+            Text(
+              dashTitle,
+              style: Styles.blackBoldMedium,
+            ),
+            SizedBox(
+              height: 24,
+            ),
+            table,
+          ],
         ),
-        SizedBox(
-          height: 20,
-        ),
-        table,
       ],
     );
   }
@@ -217,4 +270,6 @@ class _InvestorProfileViewerState extends State<InvestorProfileViewer>
   Widget _getDesktopListWidget() {
     return _getTabletListWidget();
   }
+
+  void _selectedChange(bool value) {}
 }

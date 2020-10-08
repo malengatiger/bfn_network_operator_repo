@@ -91,23 +91,15 @@ class _DashboardTabletState extends State<DashboardTablet>
       backgroundColor: Colors.brown[100],
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
+        child: Row(
           children: [
-            SizedBox(
-              height: 40,
+            Container(
+              width: 220,
+              child: MenuItems(this),
             ),
             Expanded(
-                child: Row(
-              children: [
-                Container(
-                  width: 220,
-                  child: MenuItems(this),
-                ),
-                Expanded(
-                  child: _getView(),
-                )
-              ],
-            )),
+              child: _getView(),
+            )
           ],
         ),
       ),
