@@ -9,12 +9,12 @@ import 'package:bfn_network_operator_repo/ui/lists/suppliers/suppliers.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
 
-import 'dashboard_menu.dart';
+import 'dashboard_drawer.dart';
 import 'grid.dart';
 
 const String DASHBOARD_WIDGET = 'dashboardWidget', LIST_WIDGET = 'listWidget';
 
-Widget getDashboardWidget(
+Widget getDashboardGrid(
     {@required int crossAxisCount,
     @required double crossAxisSpacing,
     @required double mainAxisSpacing,

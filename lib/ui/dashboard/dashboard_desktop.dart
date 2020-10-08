@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../bloc.dart';
-import 'dashboard_menu.dart';
+import 'dashboard_drawer.dart';
 import 'grid.dart';
 import 'helper.dart';
 
@@ -134,7 +134,7 @@ class _DashboardDesktopState extends State<DashboardDesktop>
 
   Widget _getView() {
     if (menuAction == null || menuAction == DASHBOARD) {
-      return getDashboardWidget(
+      return getDashboardGrid(
           startDate: startDate,
           endDate: endDate,
           crossAxisCount: 3,

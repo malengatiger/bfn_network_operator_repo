@@ -80,18 +80,24 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
       child: Card(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 16),
+            Image.asset(
+              'assets/logo.png',
+              color: Colors.teal[600],
+              width: 36,
+              height: 36,
+            ),
             Text(
               '${list.length}',
               style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
+                  ? Styles.blackBoldMedium
                   : widget.numberStyle,
             ),
             SizedBox(height: 20),
             Center(
               child: Text(dashTitle,
                   style: widget.titleStyle == null
-                      ? Styles.blackSmall
+                      ? Styles.blackTiny
                       : widget.titleStyle),
             ),
           ],
@@ -102,11 +108,18 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
 
   Widget _getTabletDashWidget() {
     return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      height: widget.cardWidth == null ? 200.0 : widget.cardWidth,
+      // width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
+      // height: widget.cardWidth == null ? 200.0 : widget.cardWidth,
       child: Card(
         child: Column(
           children: [
+            SizedBox(height: 48),
+            Image.asset(
+              'assets/logo.png',
+              color: Colors.teal[600],
+              width: 48,
+              height: 48,
+            ),
             SizedBox(height: 16),
             Text(
               '${list.length}',
@@ -142,26 +155,37 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
   }
 
   Widget _getMobileListWidget() {
-    return ListView.builder(itemBuilder: (context, index) {
-      var item = list.elementAt(index);
-      return Card(
-        elevation: 2,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              ListTile(
-                title: Text(
-                  '${item.email}',
-                  style: Styles.greyLabelSmall,
-                ),
-                subtitle: Text('${item.stellarAccountId}'),
+    return ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          var item = list.elementAt(index);
+          var max = double.parse(item.maximumInvoiceAmount);
+          var min = double.parse(item.minimumInvoiceAmount);
+          var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+          var formattedMax = curr.format(max);
+          var formattedMin = curr.format(min);
+          return Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.people),
+                    title: Text(
+                      '${item.account.name}',
+                      style: Styles.greyLabelSmall,
+                    ),
+                    subtitle: Text(
+                      '$formattedMin - $formattedMax',
+                      style: Styles.blackTinyBold,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      );
-    });
+            ),
+          );
+        });
   }
 
   Widget _getTabletListWidget() {

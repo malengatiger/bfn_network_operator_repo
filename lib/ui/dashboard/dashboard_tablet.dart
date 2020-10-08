@@ -8,7 +8,7 @@ import 'package:page_transition/page_transition.dart';
 import '../../bloc.dart';
 import '../date_picker/date_picker_mobile.dart';
 import 'dashboard.dart';
-import 'dashboard_menu.dart';
+import 'dashboard_drawer.dart';
 import 'grid.dart';
 
 class DashboardTablet extends StatefulWidget {
@@ -108,7 +108,7 @@ class _DashboardTabletState extends State<DashboardTablet>
 
   Widget _getView() {
     if (menuAction == null || menuAction == DASHBOARD) {
-      return getDashboardWidget(
+      return getDashboardGrid(
           startDate: startDate,
           endDate: endDate,
           crossAxisCount: 3,

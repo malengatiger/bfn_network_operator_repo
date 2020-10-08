@@ -91,18 +91,24 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
       child: Card(
         child: Column(
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 16),
+            Image.asset(
+              'assets/logo.png',
+              color: Colors.indigo[600],
+              width: 36,
+              height: 36,
+            ),
             Text(
               '${list.length}',
               style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
+                  ? Styles.blackBoldMedium
                   : widget.numberStyle,
             ),
             SizedBox(height: 20),
             Center(
               child: Text(dashTitle,
                   style: widget.titleStyle == null
-                      ? Styles.blackSmall
+                      ? Styles.blackTiny
                       : widget.titleStyle),
             ),
           ],
@@ -117,7 +123,13 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
       child: Card(
         child: Column(
           children: [
-            SizedBox(height: 16),
+            SizedBox(height: 48),
+            Image.asset(
+              'assets/logo.png',
+              color: Colors.indigo[600],
+              width: 48,
+              height: 48,
+            ),
             Text(
               '${list.length}',
               style: widget.numberStyle == null
