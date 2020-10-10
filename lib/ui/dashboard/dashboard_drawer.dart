@@ -102,17 +102,17 @@ class DashboardDrawer extends StatelessWidget {
               ),
               onTap: _handleSupplierPayments(context),
             ),
-            ListTile(
-              title: Text(
-                'Payment Requests',
-                style: Styles.blackSmall,
-              ),
-              leading: Icon(
-                Icons.monetization_on,
-                color: Colors.grey,
-              ),
-              onTap: _handlePaymentRequests(context),
-            ),
+            // ListTile(
+            //   title: Text(
+            //     'Payment Requests',
+            //     style: Styles.blackSmall,
+            //   ),
+            //   leading: Icon(
+            //     Icons.monetization_on,
+            //     color: Colors.grey,
+            //   ),
+            //   onTap: _handlePaymentRequests(context),
+            // ),
             ListTile(
               title: Text(
                 'Network Nodes',

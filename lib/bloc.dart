@@ -1,12 +1,12 @@
 import 'dart:async';
 
+import 'package:bfnlibrary/api/net_util.dart';
 import 'package:bfnlibrary/data/invoice.dart';
 import 'package:bfnlibrary/data/invoice_offer.dart';
 import 'package:bfnlibrary/data/node_info.dart';
 import 'package:bfnlibrary/data/profile.dart';
 import 'package:bfnlibrary/data/purchase_order.dart';
 import 'package:bfnlibrary/data/supplier_payment.dart';
-import 'package:bfnlibrary/net_util.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:bfnlibrary/util/prefs.dart';
 import 'package:flutter/material.dart';

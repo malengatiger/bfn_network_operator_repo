@@ -4,19 +4,25 @@ import 'package:bfnlibrary/data/invoice.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
+
+import '../grid.dart';
+import 'customer_viewer.dart';
 
 class InvoiceViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String startDate, endDate;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const InvoiceViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.startDate,
       @required this.endDate,
       @required this.widgetType})
@@ -53,7 +59,10 @@ class _InvoiceViewerState extends State<InvoiceViewer>
     if (widget.endDate != null) {
       endDate = widget.endDate;
     }
-    dataBloc.getInvoices(startDate: startDate, endDate: endDate);
+    list = await dataBloc.getInvoices(startDate: startDate, endDate: endDate);
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<Invoice> list = [];
@@ -86,71 +95,15 @@ class _InvoiceViewerState extends State<InvoiceViewer>
 
   var dashTitle = 'Invoices';
   Widget _getMobileDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 16),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.amber[600],
-              width: 36,
-              height: 36,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldMedium
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackTiny
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.amber[600],
-              width: 48,
-              height: 48,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {
-    return _getTabletDashWidget();
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   // 🥏 🥏 🥏 Responsive List widgets
@@ -164,59 +117,114 @@ class _InvoiceViewerState extends State<InvoiceViewer>
   }
 
   Widget _getMobileListWidget() {
-    return ListView.builder(itemBuilder: (context, index) {
-      var item = list.elementAt(index);
-      return Card(
-        elevation: 2,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Customer',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.customer.name}'),
-              ],
+    return ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          var item = list.elementAt(index);
+          Locale myLocale = Localizations.localeOf(context);
+          var date = DateTime.parse(item.dateRegistered);
+          var formattedDate =
+              new DateFormat('EEEE, dd MMMM yyyy', myLocale.toString())
+                  .format(date);
+          var amt = double.parse(item.amount);
+          var tax = double.parse(item.valueAddedTax);
+          var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+          var formattedAmt = curr.format(amt);
+          var formattedTax = curr.format(tax);
+          return Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Supplier',
+                          style: Styles.greyLabelSmall,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '${item.supplier.name}',
+                        style: Styles.blackBoldSmall,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Customer',
+                          style: Styles.greyLabelSmall,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('${item.customer.name}'),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Amount',
+                        style: Styles.greyLabelSmall,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '$formattedAmt',
+                        style: Styles.blackBoldSmall,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        'Value Added Tax',
+                        style: Styles.greyLabelSmall,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '$tax %',
+                        style: Styles.blackBoldSmall,
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '$formattedDate',
+                        style: Styles.blackTiny,
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Supplier',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.supplier.name}'),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  'Amount',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  '${item.totalAmount}',
-                  style: Styles.blackBoldSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.dateRegistered}')
-              ],
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 
   Widget _getTabletListWidget() {

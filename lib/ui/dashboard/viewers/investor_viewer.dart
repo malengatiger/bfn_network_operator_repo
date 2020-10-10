@@ -7,16 +7,21 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../grid.dart';
+import 'customer_viewer.dart';
+
 class InvestorProfileViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const InvestorProfileViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.widgetType})
       : super(key: key);
   @override
@@ -42,7 +47,10 @@ class _InvestorProfileViewerState extends State<InvestorProfileViewer>
   }
 
   _refresh() async {
-    dataBloc.getInvestorProfiles();
+    list = await dataBloc.getInvestorProfiles();
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<InvestorProfile> list = [];
@@ -75,67 +83,12 @@ class _InvestorProfileViewerState extends State<InvestorProfileViewer>
 
   var dashTitle = 'Investor Profiles';
   Widget _getMobileDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 16),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.indigo[600],
-              width: 36,
-              height: 36,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldMedium
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackTiny
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(
+        imageColor: Colors.blue, title: dashTitle, number: list.length);
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.indigo[600],
-              width: 48,
-              height: 48,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {

@@ -6,17 +6,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../grid.dart';
+import 'customer_viewer.dart';
+
 class SupplierPaymentViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String startDate, endDate;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const SupplierPaymentViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.startDate,
       @required this.endDate,
       @required this.widgetType})
@@ -53,7 +58,11 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
     if (widget.endDate != null) {
       endDate = widget.endDate;
     }
-    dataBloc.getSupplierPayments(startDate: startDate, endDate: endDate);
+    list = await dataBloc.getSupplierPayments(
+        startDate: startDate, endDate: endDate);
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<SupplierPayment> list = [];
@@ -86,6 +95,7 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
 
   var dashTitle = 'SupplierPayments';
   Widget _getMobileDashWidget() {
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
     return Container(
       width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
       child: Card(
@@ -118,6 +128,7 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
   }
 
   Widget _getTabletDashWidget() {
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
     return Container(
       width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
       child: Card(
@@ -166,6 +177,13 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
   Widget _getMobileListWidget() {
     return ListView.builder(itemBuilder: (context, index) {
       var item = list.elementAt(index);
+      var offerAmount, originalAmount;
+      if (item.acceptedOffer.offerAmount != null) {
+        offerAmount = getCurrency(item.acceptedOffer.offerAmount);
+      }
+      if (item.acceptedOffer.originalAmount != null) {
+        originalAmount = getCurrency(item.acceptedOffer.originalAmount);
+      }
       return Card(
         elevation: 2,
         child: Column(
@@ -204,7 +222,7 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
                   width: 8,
                 ),
                 Text(
-                  '${item.acceptedOffer.offerAmount.toStringAsFixed(2)}',
+                  '$offerAmount}',
                   style: Styles.blackBoldSmall,
                 ),
                 SizedBox(
@@ -254,13 +272,20 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
       style: Styles.blackBoldSmall,
     )));
     list.forEach((item) {
+      var offerAmount, originalAmount;
+      if (item.acceptedOffer.offerAmount != null) {
+        offerAmount = getCurrency(item.acceptedOffer.offerAmount);
+      }
+      if (item.acceptedOffer.originalAmount != null) {
+        originalAmount = getCurrency(item.acceptedOffer.originalAmount);
+      }
       rows.add(DataRow(cells: [
         DataCell(Text(item.acceptedOffer.investor.name)),
         DataCell(Text(item.acceptedOffer.customer.name)),
         DataCell(Text(item.acceptedOffer.supplier.name)),
         DataCell(Text(item.acceptedOffer.invoiceId)),
         DataCell(Text(item.acceptedOffer.offerDate)),
-        DataCell(Text(item.acceptedOffer.offerAmount.toStringAsFixed(2))),
+        DataCell(Text(offerAmount)),
       ]));
     });
 

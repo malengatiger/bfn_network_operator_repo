@@ -1,4 +1,5 @@
 import 'package:bfn_network_operator_repo/bloc.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/helper.dart';
 import 'package:bfnlibrary/data/profile.dart';
 import 'package:bfnlibrary/util/functions.dart';
@@ -7,16 +8,22 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+abstract class ViewerListener {
+  onDataReady(int count);
+}
+
 class CustomerProfileViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const CustomerProfileViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.widgetType})
       : super(key: key);
   @override
@@ -42,7 +49,10 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
   }
 
   _refresh() async {
-    dataBloc.getCustomerProfiles();
+    list = await dataBloc.getCustomerProfiles();
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<CustomerProfile> list = [];
@@ -75,69 +85,12 @@ class _CustomerProfileViewerState extends State<CustomerProfileViewer>
 
   var dashTitle = 'Customer Profiles';
   Widget _getMobileDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 16),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.teal[600],
-              width: 36,
-              height: 36,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldMedium
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackTiny
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(
+        imageColor: Colors.indigo, title: dashTitle, number: list.length);
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      // width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      // height: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.teal[600],
-              width: 48,
-              height: 48,
-            ),
-            SizedBox(height: 16),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {

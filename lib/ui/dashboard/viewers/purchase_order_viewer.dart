@@ -9,17 +9,22 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../grid.dart';
+import 'customer_viewer.dart';
+
 class PurchaseOrderViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String startDate, endDate;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const PurchaseOrderViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.startDate,
       @required this.endDate,
       @required this.widgetType})
@@ -56,7 +61,11 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
     if (widget.endDate != null) {
       endDate = widget.endDate;
     }
-    dataBloc.getPurchaseOrders(startDate: startDate, endDate: endDate);
+    list = await dataBloc.getPurchaseOrders(
+        startDate: startDate, endDate: endDate);
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<PurchaseOrder> list = [];
@@ -89,6 +98,8 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
 
   var dashTitle = 'Purchase Orders';
   Widget _getMobileDashWidget() {
+    return getDashboardSummaryWidget(
+        imageColor: Colors.teal, title: dashTitle, number: list.length);
     return Container(
       child: Card(
         child: Column(
@@ -120,39 +131,11 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.orange[600],
-              width: 48,
-              height: 48,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {
-    return _getTabletDashWidget();
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   // 🥏 🥏 🥏 Responsive List widgets
@@ -166,59 +149,126 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
   }
 
   Widget _getMobileListWidget() {
-    return ListView.builder(itemBuilder: (context, index) {
-      var item = list.elementAt(index);
-      return Card(
-        elevation: 2,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Customer',
-                  style: Styles.greyLabelSmall,
+    return ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          var item = list.elementAt(index);
+          var max = double.parse(item.amount);
+          var curr = NumberFormat.currency(symbol: 'R', decimalDigits: 2);
+          var formattedMax = curr.format(max);
+          var date = DateTime.parse(item.dateRegistered);
+          Locale myLocale = Localizations.localeOf(context);
+          var formattedDate =
+              new DateFormat('EEEE, dd MMMM yyyy', myLocale.toString())
+                  .format(date);
+          return Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          child: Text(
+                            'Customer',
+                            style: Styles.greyTiny,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Expanded(
+                          child: Text(
+                            '${item.customer.name}',
+                            style: Styles.blackTinyBold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          child: Text(
+                            'Supplier',
+                            style: Styles.greyTiny,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${item.supplier.name}',
+                          style: Styles.blackTiny,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          child: Text(
+                            'Amount',
+                            style: Styles.greyTiny,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '$formattedMax',
+                          style: Styles.blackBoldSmall,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 80,
+                          child: Text(
+                            'P.O. Number',
+                            style: Styles.greyTiny,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          '${item.purchaseOrderNumber}',
+                          style: Styles.blackTiny,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          '$formattedDate',
+                          style: Styles.greyTiny,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.customer.name}'),
-              ],
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Supplier',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.supplier.name}'),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  'Amount',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  '${item.amount}',
-                  style: Styles.blackBoldSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.dateRegistered}')
-              ],
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 
   Widget _getTabletListWidget() {
@@ -259,7 +309,7 @@ class _PurchaseOrderViewerState extends State<PurchaseOrderViewer>
     } else {
       _getAmount(cols);
       list.forEach((item) {
-        prettyPrint(item.toJson(), "🔷 🔷 Purchase Order : Portrait 🔷 🔷 🔷");
+        //prettyPrint(item.toJson(), "🔷 🔷 Purchase Order : Portrait 🔷 🔷 🔷");
         String formattedAmount = _getFormattedAmount(item);
         rows.add(DataRow(cells: [
           DataCell(

@@ -6,17 +6,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../grid.dart';
+import 'customer_viewer.dart';
+
 class AcceptedOfferViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String startDate, endDate;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const AcceptedOfferViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.startDate,
       @required this.endDate,
       @required this.widgetType})
@@ -53,7 +58,12 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
     if (widget.endDate != null) {
       endDate = widget.endDate;
     }
-    dataBloc.getAcceptedInvoiceOffers(startDate: startDate, endDate: endDate);
+    list = await dataBloc.getAcceptedInvoiceOffers(
+        startDate: startDate, endDate: endDate);
+
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<InvoiceOffer> list = [];
@@ -86,6 +96,7 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
 
   var dashTitle = 'Accepted Offers';
   Widget _getMobileDashWidget() {
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
     return Container(
       width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
       child: Card(
@@ -118,35 +129,7 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.blue[600],
-              width: 48,
-              height: 48,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {
@@ -166,6 +149,13 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
   Widget _getMobileListWidget() {
     return ListView.builder(itemBuilder: (context, index) {
       var item = list.elementAt(index);
+      var offerAmount, originalAmount;
+      if (item.offerAmount != null) {
+        offerAmount = getCurrency(item.offerAmount);
+      }
+      if (item.originalAmount != null) {
+        originalAmount = getCurrency(item.originalAmount);
+      }
       return Card(
         elevation: 2,
         child: Column(
@@ -236,7 +226,7 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
                 SizedBox(
                   width: 8,
                 ),
-                Text('${item.offerAmount.toStringAsFixed(2)}'),
+                Text('$offerAmount}'),
               ],
             ),
           ],
@@ -275,12 +265,19 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
       style: Styles.blackBoldSmall,
     )));
     list.forEach((item) {
+      var offerAmount, originalAmount;
+      if (item.offerAmount != null) {
+        offerAmount = getCurrency(item.offerAmount);
+      }
+      if (item.originalAmount != null) {
+        originalAmount = getCurrency(item.originalAmount);
+      }
       rows.add(DataRow(cells: [
         DataCell(Text(item.customer.name)),
         DataCell(Text(item.supplier.name)),
         DataCell(Text(item.investor.name)),
-        DataCell(Text(item.originalAmount.toStringAsFixed(2))),
-        DataCell(Text(item.offerAmount.toStringAsFixed(2))),
+        DataCell(Text(originalAmount)),
+        DataCell(Text(offerAmount)),
       ]));
     });
 

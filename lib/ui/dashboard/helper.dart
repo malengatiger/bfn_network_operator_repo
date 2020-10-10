@@ -20,20 +20,47 @@ Widget getDashboardGrid(
     @required double mainAxisSpacing,
     String startDate,
     String endDate,
-    GridListener gridListener}) {
+    GridListener gridListener,
+    ViewerListener viewerListener}) {
   var list = List<Widget>();
-  list.add(CustomerProfileViewer(widgetType: DASHBOARD_WIDGET));
-  list.add(InvestorProfileViewer(widgetType: DASHBOARD_WIDGET));
+  list.add(CustomerProfileViewer(
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
+  list.add(InvestorProfileViewer(
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
   list.add(PurchaseOrderViewer(
-      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+    startDate: startDate,
+    endDate: endDate,
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
   list.add(InvoiceViewer(
-      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+    startDate: startDate,
+    endDate: endDate,
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
   list.add(InvoiceOfferViewer(
-      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+    startDate: startDate,
+    endDate: endDate,
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
   list.add(AcceptedOfferViewer(
-      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+    startDate: startDate,
+    endDate: endDate,
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
   list.add(SupplierPaymentViewer(
-      startDate: startDate, endDate: endDate, widgetType: DASHBOARD_WIDGET));
+    startDate: startDate,
+    endDate: endDate,
+    widgetType: DASHBOARD_WIDGET,
+    viewerListener: viewerListener,
+  ));
 
   return DashboardGrid(
       crossAxisCount: crossAxisCount,
@@ -43,28 +70,52 @@ Widget getDashboardGrid(
       gridListener: gridListener);
 }
 
-Widget getContentView({int menuAction, String startDate, String endDate}) {
+Widget getContentView(
+    {@required int menuAction,
+    @required String startDate,
+    @required String endDate,
+    @required ViewerListener listener}) {
   switch (menuAction) {
     case CUSTOMERS:
-      return CustomerProfileViewer(widgetType: LIST_WIDGET);
+      return CustomerProfileViewer(
+        widgetType: LIST_WIDGET,
+        viewerListener: listener,
+      );
     case INVESTORS:
       return InvestorProfileViewer(
         widgetType: LIST_WIDGET,
+        viewerListener: listener,
       );
     case SUPPLIERS:
       return SupplierList();
     case PURCHASE_ORDERS:
       return PurchaseOrderViewer(
-          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
+        startDate: startDate,
+        endDate: endDate,
+        widgetType: LIST_WIDGET,
+        viewerListener: listener,
+      );
     case INVOICES:
       return InvoiceViewer(
-          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
+        startDate: startDate,
+        endDate: endDate,
+        widgetType: LIST_WIDGET,
+        viewerListener: listener,
+      );
     case INVOICE_OFFERS:
       return InvoiceOfferViewer(
-          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
+        startDate: startDate,
+        endDate: endDate,
+        widgetType: LIST_WIDGET,
+        viewerListener: listener,
+      );
     case SUPPLIER_PAYMENTS:
       return SupplierPaymentViewer(
-          startDate: startDate, endDate: endDate, widgetType: LIST_WIDGET);
+        startDate: startDate,
+        endDate: endDate,
+        widgetType: LIST_WIDGET,
+        viewerListener: listener,
+      );
     case PAYMENT_REQUESTS:
       return _getContainer('Missing PAYMENT_REQUESTS');
     case NODES:

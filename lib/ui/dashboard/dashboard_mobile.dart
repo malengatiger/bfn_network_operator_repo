@@ -1,13 +1,14 @@
 import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_drawer.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/viewers/customer_viewer.dart';
 import 'package:bfn_network_operator_repo/ui/date_picker/date_picker_mobile.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:bfnlibrary/util/prefs.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
-import 'dashboard.dart';
 import 'helper.dart';
 
 class DashboardMobile extends StatefulWidget {
@@ -17,7 +18,7 @@ class DashboardMobile extends StatefulWidget {
 
 class _DashboardMobileState extends State<DashboardMobile>
     with SingleTickerProviderStateMixin
-    implements GridListener, DateListener {
+    implements GridListener, DateListener, ViewerListener {
   AnimationController _controller;
   final GlobalKey<ScaffoldState> _drawerscaffoldkey =
       new GlobalKey<ScaffoldState>();
@@ -38,6 +39,8 @@ class _DashboardMobileState extends State<DashboardMobile>
       Prefs.setStartDate(startDate);
       Prefs.setEndDate(endDate);
     }
+    mStartDate = getFormattedDateShortest(startDate, context);
+    mEndDate = getFormattedDateShortest(endDate, context);
     setState(() {});
   }
 
@@ -47,7 +50,7 @@ class _DashboardMobileState extends State<DashboardMobile>
     super.dispose();
   }
 
-  String startDate, endDate;
+  String startDate, endDate, mStartDate, mEndDate;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -78,26 +81,48 @@ class _DashboardMobileState extends State<DashboardMobile>
           bottom: PreferredSize(
               child: Column(
                 children: [
-                  NameView(
-                    paddingLeft: 20,
-                    imageSize: 32.0,
-                    titleStyle: Styles.whiteSmall,
-                  ),
+                  // NameView(
+                  //   paddingLeft: 20,
+                  //   imageSize: 32.0,
+                  //   titleStyle: Styles.whiteSmall,
+                  // ),
                   SizedBox(
                     height: 8,
                   ),
                   mTitle == null
                       ? Container()
-                      : Text(
-                          mTitle,
-                          style: Styles.whiteMedium,
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Text(
+                              mTitle,
+                              style: Styles.whiteMedium,
+                            ),
+                            SizedBox(
+                              width: 36,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  menuAction == DASHBOARD ? '' : '$count',
+                                  style: Styles.blackBoldMedium,
+                                ),
+                                SizedBox(
+                                  width: 32,
+                                ),
+                              ],
+                            )
+                          ],
                         ),
+                  SizedBox(height: 16),
+                  getDateRangeRow(mStartDate, mEndDate),
                   SizedBox(
                     height: 20,
                   ),
                 ],
               ),
-              preferredSize: Size.fromHeight(80)),
+              preferredSize: Size.fromHeight(120)),
         ),
         backgroundColor: Colors.brown[100],
         drawer: Drawer(
@@ -194,17 +219,17 @@ class _DashboardMobileState extends State<DashboardMobile>
                 ),
                 onTap: _handleSupplierPayments,
               ),
-              ListTile(
-                title: Text(
-                  'Payment Requests',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.monetization_on,
-                  color: Colors.grey,
-                ),
-                onTap: _handlePaymentRequests,
-              ),
+              // ListTile(
+              //   title: Text(
+              //     'Payment Requests',
+              //     style: Styles.blackSmall,
+              //   ),
+              //   leading: Icon(
+              //     Icons.monetization_on,
+              //     color: Colors.grey,
+              //   ),
+              //   onTap: _handlePaymentRequests,
+              // ),
               ListTile(
                 title: Text(
                   'Network Nodes',
@@ -224,20 +249,6 @@ class _DashboardMobileState extends State<DashboardMobile>
           child: Stack(
             children: [
               _getView(),
-              // Positioned(
-              //   bottom: 50,
-              //   right: 50,
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Card(
-              //         color: Colors.teal[200],
-              //         child: SfDateRangePicker(
-              //           minDate:
-              //               DateTime.now().subtract(Duration(days: 90)),
-              //           maxDate: DateTime.now(),
-              //         )),
-              //   ),
-              // )
             ],
           ),
         ),
@@ -255,7 +266,10 @@ class _DashboardMobileState extends State<DashboardMobile>
           mainAxisSpacing: 2);
     }
     return getContentView(
-        menuAction: menuAction, startDate: startDate, endDate: endDate);
+        menuAction: menuAction,
+        startDate: startDate,
+        endDate: endDate,
+        listener: this);
   }
 
   int menuAction;
@@ -314,15 +328,56 @@ class _DashboardMobileState extends State<DashboardMobile>
   }
 
   @override
-  onRangeSelected(DateTime startDate, DateTime endDate) {
+  onRangeSelected(DateTime startDate, DateTime endDate) async {
     p('🍎DashboardMobile: onRangeSelected; 🍎 startDate : $startDate '
         '🍎 endDate: $endDate 🍎 calling  dataBloc.refreshDashboard');
-    dataBloc.refreshDashboard(
-        startDate: startDate.toIso8601String(),
-        endDate: endDate.toIso8601String());
+
+    setState(() {
+      mStartDate =
+          getFormattedDateShortest(startDate.toIso8601String(), context);
+      mEndDate = getFormattedDateShortest(endDate.toIso8601String(), context);
+    });
+
+    switch (menuAction) {
+      case DASHBOARD:
+        dataBloc.refreshDashboard(
+            startDate: startDate.toIso8601String(),
+            endDate: endDate.toIso8601String());
+        break;
+      case PURCHASE_ORDERS:
+        var list = await dataBloc.getPurchaseOrders(
+            startDate: startDate.toIso8601String(),
+            endDate: endDate.toIso8601String());
+        onDataReady(list.length);
+        break;
+      case INVOICES:
+        var list = await dataBloc.getInvoices(
+            startDate: startDate.toIso8601String(),
+            endDate: endDate.toIso8601String());
+        onDataReady(list.length);
+        break;
+      case INVOICE_OFFERS:
+        var list = await dataBloc.getInvoiceOffers(
+            startDate: startDate.toIso8601String(),
+            endDate: endDate.toIso8601String());
+        onDataReady(list.length);
+        break;
+      case SUPPLIER_PAYMENTS:
+        var list = await dataBloc.getSupplierPayments(
+            startDate: startDate.toIso8601String(),
+            endDate: endDate.toIso8601String());
+        onDataReady(list.length);
+        break;
+      case PAYMENT_REQUESTS:
+        // var list = await dataBloc.getPaurchaseOrders(
+        //     startDate: startDate.toIso8601String(),
+        //     endDate: endDate.toIso8601String());
+        // onDataReady(list.length);
+        break;
+    }
   }
 
-  String mTitle;
+  String mTitle, count = "0";
   _handleNodes() {
     p('😻 Handling Nodes');
     Navigator.pop(context);
@@ -389,18 +444,34 @@ class _DashboardMobileState extends State<DashboardMobile>
   _handleInvoices() {
     p('💛 Handling Network Invoices');
     Navigator.pop(context);
+    setState(() {
+      mTitle = 'Invoices';
+    });
     onMenuItem(INVOICES);
   }
 
   _handleInvoiceOffers() {
     p('💙 Handling InvoiceOffers');
     Navigator.pop(context);
+    setState(() {
+      mTitle = 'Invoice Offers';
+    });
     onMenuItem(INVOICE_OFFERS);
   }
 
   _handleSupplierPayments() {
     p('💙 Handling Supplier Payments');
     Navigator.pop(context);
+    setState(() {
+      mTitle = 'Supplier Payments';
+    });
     onMenuItem(SUPPLIER_PAYMENTS);
+  }
+
+  @override
+  onDataReady(int count) {
+    setState(() {
+      this.count = '$count';
+    });
   }
 }

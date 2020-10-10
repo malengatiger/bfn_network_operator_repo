@@ -6,17 +6,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 
+import '../grid.dart';
+import 'customer_viewer.dart';
+
 class InvoiceOfferViewer extends StatefulWidget {
   final double cardWidth;
   final TextStyle titleStyle, numberStyle;
   final String startDate, endDate;
   final String widgetType;
+  final ViewerListener viewerListener;
 
   const InvoiceOfferViewer(
       {Key key,
       this.cardWidth,
       this.titleStyle,
       this.numberStyle,
+      @required this.viewerListener,
       @required this.startDate,
       @required this.endDate,
       @required this.widgetType})
@@ -53,7 +58,11 @@ class _InvoiceOfferViewerState extends State<InvoiceOfferViewer>
     if (widget.endDate != null) {
       endDate = widget.endDate;
     }
-    dataBloc.getInvoiceOffers(startDate: startDate, endDate: endDate);
+    list =
+        await dataBloc.getInvoiceOffers(startDate: startDate, endDate: endDate);
+    if (widget.viewerListener != null) {
+      widget.viewerListener.onDataReady(list.length);
+    }
   }
 
   List<InvoiceOffer> list = [];
@@ -86,67 +95,12 @@ class _InvoiceOfferViewerState extends State<InvoiceOfferViewer>
 
   var dashTitle = 'InvoiceOffers';
   Widget _getMobileDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 220.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 16),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.pink[600],
-              width: 36,
-              height: 36,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldMedium
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 20),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackTiny
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(
+        imageColor: Colors.amber[700], title: dashTitle, number: list.length);
   }
 
   Widget _getTabletDashWidget() {
-    return Container(
-      width: widget.cardWidth == null ? 200.0 : widget.cardWidth,
-      child: Card(
-        child: Column(
-          children: [
-            SizedBox(height: 48),
-            Image.asset(
-              'assets/logo.png',
-              color: Colors.pink[300],
-              width: 48,
-              height: 48,
-            ),
-            Text(
-              '${list.length}',
-              style: widget.numberStyle == null
-                  ? Styles.blackBoldLarge
-                  : widget.numberStyle,
-            ),
-            SizedBox(height: 16),
-            Center(
-              child: Text(dashTitle,
-                  style: widget.titleStyle == null
-                      ? Styles.blackSmall
-                      : widget.titleStyle),
-            ),
-          ],
-        ),
-      ),
-    );
+    return getDashboardSummaryWidget(title: dashTitle, number: list.length);
   }
 
   Widget _getDesktopDashWidget() {
@@ -155,150 +109,190 @@ class _InvoiceOfferViewerState extends State<InvoiceOfferViewer>
 
   // 🥏 🥏 🥏 Responsive List widgets
   Widget _getListWidget() {
-    //todo -  🌰  🌰  🌰 are we mobile or desktop/tablet?????  return dataTable or ListView 🌰
-    return ScreenTypeLayout(
+    p(' 🌰  🌰  🌰 are we mobile or desktop/tablet?????  return dataTable or ListView 🌰');
+    var mLayout = ScreenTypeLayout(
       mobile: _getMobileListWidget(),
-      tablet: _getTabletListWidget(),
-      desktop: _getDesktopListWidget(),
+      tablet: Container(),
+      desktop: Container(),
     );
+    p('_getListWidget ending ...................... 🎁🎁🎁🎁🎁 '
+        'returning ScreenTypeLayout ${mLayout.toString()}');
+    return mLayout;
   }
 
   Widget _getMobileListWidget() {
-    return ListView.builder(itemBuilder: (context, index) {
-      var item = list.elementAt(index);
-      return Card(
-        elevation: 2,
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Customer',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.customer.name}'),
-              ],
+    p('_getMobileListWidget starting ...................... 🥬🥬🥬🥬🥬🥬');
+
+    return ListView.builder(
+        itemCount: list.length,
+        itemBuilder: (context, index) {
+          var item = list.elementAt(index);
+          var offerAmount, originalAmount;
+          if (item.offerAmount != null) {
+            offerAmount = getCurrency(item.offerAmount);
+          }
+          if (item.originalAmount != null) {
+            originalAmount = getCurrency(item.originalAmount);
+          }
+
+          return Card(
+            elevation: 2,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Customer',
+                          style: Styles.greyLabelSmall,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('${item.investor.name}'),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Supplier',
+                          style: Styles.greyLabelSmall,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('${item.supplier.name}'),
+                    ],
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  originalAmount == null
+                      ? Container()
+                      : Row(
+                          children: [
+                            Text(
+                              'Original Amount',
+                              style: Styles.greyLabelSmall,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              '$originalAmount',
+                              style: Styles.blackBoldSmall,
+                            ),
+                          ],
+                        ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(
+                          'Investor',
+                          style: Styles.greyLabelSmall,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text(
+                        '${item.investor.name}',
+                        style: Styles.blackBoldSmall,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  offerAmount == null
+                      ? Container()
+                      : Row(
+                          children: [
+                            Text(
+                              'Offer Amount',
+                              style: Styles.greyLabelSmall,
+                            ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text('$offerAmount'),
+                          ],
+                        ),
+                ],
+              ),
             ),
-            Row(
-              children: [
-                Text(
-                  'Supplier',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.supplier.name}'),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  'Original Amount',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  '${item.originalAmount}',
-                  style: Styles.blackBoldSmall,
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text(
-                  'Investor',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  '${item.investor.name}',
-                  style: Styles.blackBoldSmall,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                Text(
-                  'Offer Amount',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.offerAmount.toStringAsFixed(2)}'),
-              ],
-            ),
-          ],
-        ),
-      );
-    });
+          );
+        });
   }
 
-  Widget _getTabletListWidget() {
-    List<DataColumn> cols = [];
-    List<DataRow> rows = [];
-    DataTable table = DataTable(columns: cols, rows: rows);
-    cols.add(DataColumn(
-        label: Text(
-      'Customer',
-      style: Styles.greyLabelSmall,
-    )));
-    cols.add(DataColumn(
-        label: Text(
-      'Supplier',
-      style: Styles.greyLabelSmall,
-    )));
-    cols.add(DataColumn(
-        label: Text(
-      'Investor',
-      style: Styles.greyLabelSmall,
-    )));
-    cols.add(DataColumn(
-        label: Text(
-      'Original',
-      style: Styles.greyLabelSmall,
-    )));
-    cols.add(DataColumn(
-        label: Text(
-      'Offer Amount',
-      style: Styles.blackBoldSmall,
-    )));
-    list.forEach((item) {
-      rows.add(DataRow(cells: [
-        DataCell(Text(item.customer.name)),
-        DataCell(Text(item.supplier.name)),
-        DataCell(Text(item.investor.name)),
-        DataCell(Text(item.originalAmount.toStringAsFixed(2))),
-        DataCell(Text(item.offerAmount.toStringAsFixed(2))),
-      ]));
-    });
-
-    return Column(
-      children: [
-        Text(
-          dashTitle,
-          style: Styles.blackBoldMedium,
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        table,
-      ],
-    );
-  }
-
-  Widget _getDesktopListWidget() {
-    return _getTabletListWidget();
-  }
+  // Widget _getTabletListWidget() {
+  //   p('_getTabletListWidget starting ...................... 🔵🔵🔵🔵🔵🔵 '
+  //       'why is this method called? 🔵 who calls it? 🔵');
+  //   List<DataColumn> cols = [];
+  //   List<DataRow> rows = [];
+  //   DataTable table = DataTable(columns: cols, rows: rows);
+  //   cols.add(DataColumn(
+  //       label: Text(
+  //     'Customer',
+  //     style: Styles.greyLabelSmall,
+  //   )));
+  //   cols.add(DataColumn(
+  //       label: Text(
+  //     'Supplier',
+  //     style: Styles.greyLabelSmall,
+  //   )));
+  //   cols.add(DataColumn(
+  //       label: Text(
+  //     'Investor',
+  //     style: Styles.greyLabelSmall,
+  //   )));
+  //   cols.add(DataColumn(
+  //       label: Text(
+  //     'Original',
+  //     style: Styles.greyLabelSmall,
+  //   )));
+  //   cols.add(DataColumn(
+  //       label: Text(
+  //     'Offer Amount',
+  //     style: Styles.blackBoldSmall,
+  //   )));
+  //   list.forEach((item) {
+  //     rows.add(DataRow(cells: [
+  //       DataCell(Text(item.customer.name)),
+  //       DataCell(Text(item.supplier.name)),
+  //       DataCell(Text(item.investor.name)),
+  //       DataCell(Text(item.originalAmount.toStringAsFixed(2))),
+  //       DataCell(Text(item.offerAmount.toStringAsFixed(2))),
+  //     ]));
+  //   });
+  //
+  //   return Column(
+  //     children: [
+  //       Text(
+  //         dashTitle,
+  //         style: Styles.blackBoldMedium,
+  //       ),
+  //       SizedBox(
+  //         height: 20,
+  //       ),
+  //       table,
+  //     ],
+  //   );
+  // }
+  //
+  // Widget _getDesktopListWidget() {
+  //   p('_getDesktopListWidget starting ...................... 🍊🍊🍊🍊🍊');
+  //   return _getTabletListWidget();
+  // }
 }
