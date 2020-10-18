@@ -1,6 +1,6 @@
 import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/helper.dart';
-import 'package:bfnlibrary/data/invoice_offer.dart';
+import 'package:bfnlibrary/data/accepted_offer.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -66,16 +66,17 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
     }
   }
 
-  List<InvoiceOffer> list = [];
+  List<AcceptedOffer> list = [];
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<InvoiceOffer>>(
-        stream: dataBloc.invoiceOfferStream,
+    return StreamBuilder<List<AcceptedOffer>>(
+        stream: dataBloc.acceptedOfferStream,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             p('🔵 🔵 🔵 stream delivering data to widget: '
-                '${snapshot.data.length} items 🔵');
+                '${snapshot.data.length} items 🔸 🔸 🔸 🔸 🔵');
             list = snapshot.data;
+            checkAcceptedOfferDuplicates();
           }
           if (mWidgetType == DASHBOARD_WIDGET) {
             return _getDashWidget();
@@ -83,6 +84,21 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
             return _getListWidget();
           }
         });
+  }
+
+  void checkAcceptedOfferDuplicates() {
+    var map = Map<String, AcceptedOffer>();
+    p('🔸🔸🔸 checkAcceptedOfferDuplicates .....');
+    list.forEach((acceptedOffer) {
+      if (map.containsKey(acceptedOffer.invoiceId)) {
+        p('🍊 🍊 🍊 This invoice already has an acceptedOffer; 🌀 Houston we have a problem.');
+        p('🔆 🔆 🔆 Invalid AcceptedOffer: ${prettyPrint(acceptedOffer.toJson(), '🔆 FuckedUp acceptedOffer')}');
+        var existing = map[acceptedOffer.invoiceId];
+        p('🔵 🔵 🔵  Existing AcceptedOffer: ${prettyPrint(existing.toJson(), '🔵 Original acceptedOffer')}');
+      } else {
+        map[acceptedOffer.invoiceId] = acceptedOffer;
+      }
+    });
   }
 
   // 🥏 🥏 🥏 Responsive Dashboard widgets
@@ -160,18 +176,18 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
         elevation: 2,
         child: Column(
           children: [
-            Row(
-              children: [
-                Text(
-                  'Customer',
-                  style: Styles.greyLabelSmall,
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text('${item.customer.name}'),
-              ],
-            ),
+            // Row(
+            //   children: [
+            //     Text(
+            //       'Investor',
+            //       style: Styles.greyLabelSmall,
+            //     ),
+            //     SizedBox(
+            //       width: 8,
+            //     ),
+            //     Text('${item.investor.name}'),
+            //   ],
+            // ),
             Row(
               children: [
                 Text(
@@ -239,11 +255,11 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
     List<DataColumn> cols = [];
     List<DataRow> rows = [];
     DataTable table = DataTable(columns: cols, rows: rows);
-    cols.add(DataColumn(
-        label: Text(
-      'Customer',
-      style: Styles.greyLabelSmall,
-    )));
+    // cols.add(DataColumn(
+    //     label: Text(
+    //   'Customer',
+    //   style: Styles.greyLabelSmall,
+    // )));
     cols.add(DataColumn(
         label: Text(
       'Supplier',
@@ -273,7 +289,7 @@ class _AcceptedOfferViewerState extends State<AcceptedOfferViewer>
         originalAmount = getCurrency(item.originalAmount);
       }
       rows.add(DataRow(cells: [
-        DataCell(Text(item.customer.name)),
+        // DataCell(Text(item.customer.name)),
         DataCell(Text(item.supplier.name)),
         DataCell(Text(item.investor.name)),
         DataCell(Text(originalAmount)),

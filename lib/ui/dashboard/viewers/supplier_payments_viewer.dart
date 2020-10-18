@@ -246,11 +246,11 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
       'Investor',
       style: Styles.greyLabelSmall,
     )));
-    cols.add(DataColumn(
-        label: Text(
-      'Customer',
-      style: Styles.greyLabelSmall,
-    )));
+    // cols.add(DataColumn(
+    //     label: Text(
+    //   'Customer',
+    //   style: Styles.greyLabelSmall,
+    // )));
     cols.add(DataColumn(
         label: Text(
       'Supplier',
@@ -281,7 +281,7 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
       }
       rows.add(DataRow(cells: [
         DataCell(Text(item.acceptedOffer.investor.name)),
-        DataCell(Text(item.acceptedOffer.customer.name)),
+        // DataCell(Text(item.acceptedOffer.customer.name)),
         DataCell(Text(item.acceptedOffer.supplier.name)),
         DataCell(Text(item.acceptedOffer.invoiceId)),
         DataCell(Text(item.acceptedOffer.offerDate)),

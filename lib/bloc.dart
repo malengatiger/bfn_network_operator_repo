@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bfnlibrary/api/net_util.dart';
+import 'package:bfnlibrary/data/accepted_offer.dart';
 import 'package:bfnlibrary/data/invoice.dart';
 import 'package:bfnlibrary/data/invoice_offer.dart';
 import 'package:bfnlibrary/data/node_info.dart';
@@ -41,9 +42,9 @@ class DataBloc extends ChangeNotifier {
   Stream<List<InvoiceOffer>> get invoiceOfferStream =>
       _invoiceOfferStream.stream;
 
-  StreamController<List<InvoiceOffer>> _acceptedOfferStream =
+  StreamController<List<AcceptedOffer>> _acceptedOfferStream =
       StreamController.broadcast();
-  Stream<List<InvoiceOffer>> get acceptedOfferStream =>
+  Stream<List<AcceptedOffer>> get acceptedOfferStream =>
       _acceptedOfferStream.stream;
 
   StreamController<List<SupplierPayment>> _supplierPaymentStream =
@@ -74,8 +75,8 @@ class DataBloc extends ChangeNotifier {
   List<InvoiceOffer> _invoiceOffers = [];
   List<InvoiceOffer> get invoiceOffers => _invoiceOffers;
 
-  List<InvoiceOffer> _acceptedOffers = [];
-  List<InvoiceOffer> get acceptedOffers => _acceptedOffers;
+  List<AcceptedOffer> _acceptedOffers = [];
+  List<AcceptedOffer> get acceptedOffers => _acceptedOffers;
 
   List<SupplierPayment> _supplierPayments = [];
   List<SupplierPayment> get supplierPayments => _supplierPayments;
@@ -116,7 +117,7 @@ class DataBloc extends ChangeNotifier {
     return _purchaseOrders;
   }
 
-  Future<List<InvoiceOffer>> getAcceptedInvoiceOffers(
+  Future<List<AcceptedOffer>> getAcceptedInvoiceOffers(
       {String startDate, String endDate}) async {
     _acceptedOffers = await Net.getAcceptedInvoiceOffers(
         startDate: startDate, endDate: endDate);
