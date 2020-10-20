@@ -1,4 +1,4 @@
-import 'package:bfn_network_operator_repo/demo_driver.dart';
+import 'package:bfn_network_operator_repo/ui/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: DemoDriver(),
+      home: Dashboard(),
     );
   }
 }

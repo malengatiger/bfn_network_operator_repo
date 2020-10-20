@@ -1,4 +1,5 @@
 import 'package:bfn_network_operator_repo/bloc.dart';
+import 'package:bfn_network_operator_repo/demo_driver.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_drawer.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/grid.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/viewers/customer_viewer.dart';
@@ -76,6 +77,12 @@ class _DashboardMobileState extends State<DashboardMobile>
                   color: Colors.white,
                 ),
                 onPressed: _navigateToDateRange),
+            IconButton(
+                icon: Icon(
+                  Icons.add_chart,
+                  color: Colors.yellowAccent,
+                ),
+                onPressed: _navigateToDemoData),
           ],
           backgroundColor: Colors.pink[200],
           bottom: PreferredSize(
@@ -324,6 +331,17 @@ class _DashboardMobileState extends State<DashboardMobile>
             child: DatePickerMobile(
               dateListener: this,
             )));
+    print('🤟🤟🤟🤟🤟🤟🤟🤟 Date returned from date pickin ... ');
+  }
+
+  void _navigateToDemoData() async {
+    await Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.scale,
+            alignment: Alignment.topLeft,
+            duration: Duration(seconds: 1),
+            child: DemoDriver()));
     print('🤟🤟🤟🤟🤟🤟🤟🤟 Date returned from date pickin ... ');
   }
 

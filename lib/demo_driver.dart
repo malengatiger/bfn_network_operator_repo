@@ -1,7 +1,9 @@
+import 'package:bfn_network_operator_repo/ui/dashboard/dashboard.dart';
 import 'package:bfnlibrary/api/net_util.dart';
 import 'package:bfnlibrary/util/fb_util.dart';
 import 'package:bfnlibrary/util/functions.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class DemoDriver extends StatefulWidget {
   DemoDriver({Key key}) : super(key: key);
@@ -153,9 +155,39 @@ class _DemoDriverState extends State<DemoDriver> {
                       )
                     : Container(
                         child: Center(
-                          child: Text(
-                            'Work is Done',
-                            style: Styles.blackBoldMedium,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 100,
+                              ),
+                              Text(
+                                'Work is Done',
+                                style: Styles.blackBoldMedium,
+                              ),
+                              SizedBox(
+                                height: 100,
+                              ),
+                              RaisedButton(
+                                  color: Colors.teal,
+                                  elevation: 8,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12.0),
+                                    child: Text(
+                                      'Go to Dashboard',
+                                      style: Styles.whiteSmall,
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.push(
+                                        context,
+                                        PageTransition(
+                                            type: PageTransitionType.scale,
+                                            alignment: Alignment.topLeft,
+                                            duration: Duration(seconds: 1),
+                                            child: Dashboard()));
+                                  })
+                            ],
                           ),
                         ),
                       )
