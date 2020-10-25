@@ -228,7 +228,7 @@ class _SupplierPaymentViewerState extends State<SupplierPaymentViewer>
                 SizedBox(
                   width: 8,
                 ),
-                Text('${item.date}')
+                Text('${item.dateRegistered}')
               ],
             ),
           ],

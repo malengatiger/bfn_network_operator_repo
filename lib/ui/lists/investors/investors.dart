@@ -14,7 +14,7 @@ class InvestorList extends StatefulWidget {
 class _InvestorListState extends State<InvestorList>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  List<UserDTO> users = [];
+  List<BFNUser> users = [];
 
   @override
   void initState() {

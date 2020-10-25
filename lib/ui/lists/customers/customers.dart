@@ -13,7 +13,7 @@ class CustomerList extends StatefulWidget {
 class _CustomerListState extends State<CustomerList>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  List<UserDTO> users = [];
+  List<BFNUser> users = [];
 
   @override
   void initState() {

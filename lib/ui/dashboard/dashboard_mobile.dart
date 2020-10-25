@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bfn_network_operator_repo/bloc.dart';
 import 'package:bfn_network_operator_repo/demo_driver.dart';
 import 'package:bfn_network_operator_repo/ui/dashboard/dashboard_drawer.dart';
@@ -54,212 +56,219 @@ class _DashboardMobileState extends State<DashboardMobile>
   String startDate, endDate, mStartDate, mEndDate;
   @override
   Widget build(BuildContext context) {
+    var isIOS = Platform.isIOS;
     return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'BFN Network Operator',
-            style: Styles.whiteSmall,
-          ),
-          actions: [
-            IconButton(
-                icon: Icon(
-                  Icons.refresh_sharp,
-                  color: Colors.white,
+      child: isIOS
+          ? CupertinoPageScaffold(
+              child: Container(
+              color: Colors.teal[200],
+              child: Text('iOS'),
+            ))
+          : Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  'BFN Network Operator',
+                  style: Styles.whiteSmall,
                 ),
-                onPressed: () {
-                  dataBloc.refreshDashboard(
-                      startDate: startDate, endDate: endDate);
-                }),
-            IconButton(
-                icon: Icon(
-                  Icons.calendar_today_outlined,
-                  color: Colors.white,
-                ),
-                onPressed: _navigateToDateRange),
-            IconButton(
-                icon: Icon(
-                  Icons.add_chart,
-                  color: Colors.yellowAccent,
-                ),
-                onPressed: _navigateToDemoData),
-          ],
-          backgroundColor: Colors.pink[200],
-          bottom: PreferredSize(
-              child: Column(
-                children: [
-                  // NameView(
-                  //   paddingLeft: 20,
-                  //   imageSize: 32.0,
-                  //   titleStyle: Styles.whiteSmall,
-                  // ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  mTitle == null
-                      ? Container()
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              mTitle,
-                              style: Styles.whiteMedium,
-                            ),
-                            SizedBox(
-                              width: 36,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Text(
-                                  menuAction == DASHBOARD ? '' : '$count',
-                                  style: Styles.blackBoldMedium,
-                                ),
-                                SizedBox(
-                                  width: 32,
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                  SizedBox(height: 16),
-                  getDateRangeRow(mStartDate, mEndDate),
-                  SizedBox(
-                    height: 20,
-                  ),
+                actions: [
+                  IconButton(
+                      icon: Icon(
+                        Icons.refresh_sharp,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        dataBloc.refreshDashboard(
+                            startDate: startDate, endDate: endDate);
+                      }),
+                  IconButton(
+                      icon: Icon(
+                        Icons.calendar_today_outlined,
+                        color: Colors.white,
+                      ),
+                      onPressed: _navigateToDateRange),
+                  IconButton(
+                      icon: Icon(
+                        Icons.add_chart,
+                        color: Colors.yellowAccent,
+                      ),
+                      onPressed: _navigateToDemoData),
                 ],
+                backgroundColor: Colors.pink[200],
+                bottom: PreferredSize(
+                    child: Column(
+                      children: [
+                        // NameView(
+                        //   paddingLeft: 20,
+                        //   imageSize: 32.0,
+                        //   titleStyle: Styles.whiteSmall,
+                        // ),
+                        SizedBox(
+                          height: 8,
+                        ),
+                        mTitle == null
+                            ? Container()
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    mTitle,
+                                    style: Styles.whiteMedium,
+                                  ),
+                                  SizedBox(
+                                    width: 36,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        menuAction == DASHBOARD ? '' : '$count',
+                                        style: Styles.blackBoldMedium,
+                                      ),
+                                      SizedBox(
+                                        width: 32,
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                        SizedBox(height: 16),
+                        getDateRangeRow(mStartDate, mEndDate),
+                        SizedBox(
+                          height: 20,
+                        ),
+                      ],
+                    ),
+                    preferredSize: Size.fromHeight(120)),
               ),
-              preferredSize: Size.fromHeight(120)),
-        ),
-        backgroundColor: Colors.brown[100],
-        drawer: Drawer(
-          child: ListView(
-            children: [
-              SizedBox(
-                height: 48,
+              backgroundColor: Colors.brown[100],
+              drawer: Drawer(
+                child: ListView(
+                  children: [
+                    SizedBox(
+                      height: 48,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'DashBoard',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.network_check,
+                        color: Colors.black,
+                      ),
+                      onTap: _handleDashboard,
+                    ),
+                    ListTile(
+                      leading: Icon(
+                        Icons.people,
+                        color: Colors.blue,
+                      ),
+                      title: Text(
+                        'Customers',
+                        style: Styles.blackSmall,
+                      ),
+                      onTap: _handleCustomers,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Suppliers',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.people_outline,
+                        color: Colors.indigo,
+                      ),
+                      onTap: _handleSuppliers,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Investors',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.people_outline,
+                        color: Colors.indigo,
+                      ),
+                      onTap: _handleInvestors,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Purchase Orders',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.all_inbox_rounded,
+                        color: Colors.pink,
+                      ),
+                      onTap: _handlePurchaseOrders,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Invoices',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.article_sharp,
+                        color: Colors.teal,
+                      ),
+                      onTap: _handleInvoices,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Invoice Offers',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.auto_awesome_motion,
+                        color: Colors.deepPurple,
+                      ),
+                      onTap: _handleInvoiceOffers,
+                    ),
+                    ListTile(
+                      title: Text(
+                        'Supplier Payments',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.monetization_on,
+                        color: Colors.black,
+                      ),
+                      onTap: _handleSupplierPayments,
+                    ),
+                    // ListTile(
+                    //   title: Text(
+                    //     'Payment Requests',
+                    //     style: Styles.blackSmall,
+                    //   ),
+                    //   leading: Icon(
+                    //     Icons.monetization_on,
+                    //     color: Colors.grey,
+                    //   ),
+                    //   onTap: _handlePaymentRequests,
+                    // ),
+                    ListTile(
+                      title: Text(
+                        'Network Nodes',
+                        style: Styles.blackSmall,
+                      ),
+                      leading: Icon(
+                        Icons.network_wifi,
+                        color: Colors.amber[900],
+                      ),
+                      onTap: _handleNodes,
+                    ),
+                  ],
+                ),
               ),
-              ListTile(
-                title: Text(
-                  'DashBoard',
-                  style: Styles.blackSmall,
+              body: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Stack(
+                  children: [
+                    _getView(),
+                  ],
                 ),
-                leading: Icon(
-                  Icons.network_check,
-                  color: Colors.black,
-                ),
-                onTap: _handleDashboard,
               ),
-              ListTile(
-                leading: Icon(
-                  Icons.people,
-                  color: Colors.blue,
-                ),
-                title: Text(
-                  'Customers',
-                  style: Styles.blackSmall,
-                ),
-                onTap: _handleCustomers,
-              ),
-              ListTile(
-                title: Text(
-                  'Suppliers',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.people_outline,
-                  color: Colors.indigo,
-                ),
-                onTap: _handleSuppliers,
-              ),
-              ListTile(
-                title: Text(
-                  'Investors',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.people_outline,
-                  color: Colors.indigo,
-                ),
-                onTap: _handleInvestors,
-              ),
-              ListTile(
-                title: Text(
-                  'Purchase Orders',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.all_inbox_rounded,
-                  color: Colors.pink,
-                ),
-                onTap: _handlePurchaseOrders,
-              ),
-              ListTile(
-                title: Text(
-                  'Invoices',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.article_sharp,
-                  color: Colors.teal,
-                ),
-                onTap: _handleInvoices,
-              ),
-              ListTile(
-                title: Text(
-                  'Invoice Offers',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.auto_awesome_motion,
-                  color: Colors.deepPurple,
-                ),
-                onTap: _handleInvoiceOffers,
-              ),
-              ListTile(
-                title: Text(
-                  'Supplier Payments',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.monetization_on,
-                  color: Colors.black,
-                ),
-                onTap: _handleSupplierPayments,
-              ),
-              // ListTile(
-              //   title: Text(
-              //     'Payment Requests',
-              //     style: Styles.blackSmall,
-              //   ),
-              //   leading: Icon(
-              //     Icons.monetization_on,
-              //     color: Colors.grey,
-              //   ),
-              //   onTap: _handlePaymentRequests,
-              // ),
-              ListTile(
-                title: Text(
-                  'Network Nodes',
-                  style: Styles.blackSmall,
-                ),
-                leading: Icon(
-                  Icons.network_wifi,
-                  color: Colors.amber[900],
-                ),
-                onTap: _handleNodes,
-              ),
-            ],
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Stack(
-            children: [
-              _getView(),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 

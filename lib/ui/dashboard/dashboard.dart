@@ -23,21 +23,15 @@ class _DashboardState extends State<Dashboard>
     _controller = AnimationController(vsync: this);
     super.initState();
     Firebase.initializeApp().whenComplete(() {
-      print("🥦 Firebase.initializeApp() 🥦🥦🥦🥦 completed");
-      _pingStellar();
+      print("🥦🥦🥦🥦🥦 Firebase.initializeApp() 🥦🥦🥦🥦 completed");
       _checkUser();
-      setState(() {});
+      _pingStellar();
     });
   }
 
   void _pingStellar() async {
     await StellarUtility.ping();
-    var isLoggedin = await FireBaseUtil.isUserLoggedIn();
-    p('🥝 🥝 Checking Firebase: 🍔 Are we logged in? $isLoggedin');
-    if (!isLoggedin) {
-      var user = await FireBaseUtil.signIn();
-      p('🍎 🍎 🍎 user has been signed in: ${user.hashCode}');
-    }
+
     var resp = await StellarUtility.getAccountResponse(
         'GAVR7MVYQ4DQXK6TUXMAWH7VSC3BQVROXOG6IQ7EHU65F2ANJ65O2YUM');
     p(' 🥦 🥦 _DashboardState: Stellar has responded with an account response: '
@@ -51,12 +45,20 @@ class _DashboardState extends State<Dashboard>
   }
 
   void _checkUser() async {
+    var isLoggedin = await FireBaseUtil.isUserLoggedIn();
+    p('🥝 🥝 ......... Checking authenticated User ....: '
+        '🍔 Are we logged in? $isLoggedin');
+    if (!isLoggedin) {
+      var user = await FireBaseUtil.signInAdminUser();
+      p('🍎 🍎 🍎 user has been signed in: '
+          '${user.displayName} ${user.email}');
+    }
     _getData();
     var testUser = const String.fromEnvironment("user");
     var son = const String.fromEnvironment("son");
     p('Property user from environment: 🔵  🔵  🔵 $testUser son: $son');
     var isLoggedIn = await FireBaseUtil.isUserLoggedIn();
-    p("🍊  🍊  🍊 The user is loggedIn:  🥦 $isLoggedIn  🥦");
+    p("🍊 🍊 🍊 The user is loggedIn:  🥦 $isLoggedIn  🥦");
     await dataBloc.getNetworkNodes();
   }
 

@@ -14,7 +14,7 @@ class SupplierList extends StatefulWidget {
 class _SupplierListState extends State<SupplierList>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
-  List<UserDTO> users = [];
+  List<BFNUser> users = [];
 
   @override
   void initState() {

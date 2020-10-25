@@ -30,6 +30,20 @@ class _DemoDriverState extends State<DemoDriver> {
     p("result: 🔶🔶🔶 $result 🔶🔶🔶");
     setState(() {
       isBusy = false;
+      isDone = true;
+    });
+  }
+
+  _startPurchaseOrders() async {
+    await FireBaseUtil.initialize();
+    setState(() {
+      isBusy = true;
+    });
+    p('🔵 🔵 Starting generatePurchaseOrders ....');
+    var result = await Net.generatePurchaseOrders();
+    p("generatePurchaseOrders result: 🔶🔶🔶 $result 🔶🔶🔶");
+    setState(() {
+      isBusy = false;
     });
   }
 
@@ -97,15 +111,15 @@ class _DemoDriverState extends State<DemoDriver> {
               children: [
                 !isDone
                     ? Padding(
-                        padding: const EdgeInsets.all(20.0),
+                        padding: const EdgeInsets.all(12.0),
                         child: Card(
                           child: Column(
                             children: [
                               SizedBox(
-                                height: 100,
+                                height: 20,
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(24.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Container(
                                   width: double.infinity,
                                   child: RaisedButton(
@@ -118,7 +132,7 @@ class _DemoDriverState extends State<DemoDriver> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
                                           'Anchor Demo Data',
-                                          style: Styles.whiteMedium,
+                                          style: Styles.whiteSmall,
                                         ),
                                       ),
                                     ),
@@ -126,10 +140,10 @@ class _DemoDriverState extends State<DemoDriver> {
                                 ),
                               ),
                               SizedBox(
-                                height: 40,
+                                height: 20,
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(24.0),
+                                padding: const EdgeInsets.all(12.0),
                                 child: Container(
                                   width: double.infinity,
                                   child: RaisedButton(
@@ -142,7 +156,31 @@ class _DemoDriverState extends State<DemoDriver> {
                                         padding: const EdgeInsets.all(8.0),
                                         child: Text(
                                           'BFN Demo Data',
-                                          style: Styles.whiteMedium,
+                                          style: Styles.whiteSmall,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  child: RaisedButton(
+                                    onPressed: _startPurchaseOrders,
+                                    elevation: 8,
+                                    color: Colors.indigo,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(
+                                          'Purchase Orders',
+                                          style: Styles.whiteSmall,
                                         ),
                                       ),
                                     ),
